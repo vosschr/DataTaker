@@ -1,0 +1,79 @@
+\documentclass[a4paper,12pt]{article}
+
+% Sprach- und Zeichencodierungseinstellungen
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+% Schönere Schrift und Layout-Optimierungen
+\usepackage{lmodern}
+\usepackage{microtype}
+
+% Seitenränder einstellen
+\usepackage{geometry}
+\geometry{a4paper, margin=2.5cm}
+
+% Für Listen und bessere Formatierung
+\usepackage{enumitem}
+
+% Falls benötigt für Grafiken (z.B. Logo)
+\usepackage{graphicx}
+
+% Titel- und Autorangaben
+\title{DataTaker - Projektdokumentation \\ \large (A1) Kurzbeschreibung}
+\author{Projektteam: Arno Kesper und Studierende der Universität Marburg}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Inhaltliche Beschreibung des Projekts}
+
+\subsection{Überblick}
+Das Projekt \emph{DataTaker} ist eine mobile Applikation, die darauf abzielt, Nutzerinnen und Nutzern ein intuitives Werkzeug zur Erfassung von Daten in frei konfigurierbaren Tabellen bereitzustellen. Durch den Einsatz moderner Technologien (React Native, TypeScript, Expo) soll eine plattformunabhängige Nutzung auf Android- und iOS-Geräten ermöglicht werden. 
+
+Die Kernidee besteht darin, dass Anwender eigenständig Tabellen erstellen können, in denen Spalten (bzw. Variablen) definierbar sind. Jede Spalte kann einen spezifischen Datentyp besitzen (z.~B. Text, Zahl, Datum, Boolean, Bild, Enum-Auswahl), sodass die Eingabe an die individuellen Anforderungen der Nutzenden angepasst werden kann. Zudem sollen Import- und Exportfunktionen (z.~B. als CSV, JSON sowie optional ZIP-Archive inklusive Bilddaten) den Datenaustausch vereinfachen. Darüber hinaus soll das Projekt im Nachhinein erweiterbar sein (Funktionen wie Graphen zu den Tabellen o.ä.).
+
+\subsection{Zielsetzung}
+Das Hauptziel besteht darin, einen flexiblen, leicht bedienbaren und erweiterbaren Datenerfassungs-Workflow zu schaffen. Dabei stehen folgende Punkte im Vordergrund:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Benutzerfreundlichkeit:} Einfache Bedienung ohne Vorwissen, klarer Fokus auf gute UX-Design-Patterns.
+    \item \textbf{Flexibilität:} Unterstützung verschiedener Datentypen und die Möglichkeit, Tabellen nachträglich anzupassen.
+    \item \textbf{Plattformunabhängigkeit:} Einsatz von React Native, um sowohl Android- als auch iOS-Nutzende anzusprechen.
+    \item \textbf{Nachhaltige Datenhaltung:} Nutzung einer lokalen Datenbank (Expo-SQLite) für persistente Speicherung.
+    \item \textbf{Datenaustausch:} Einfache Export- und ggf. Importfunktionen, um mit anderen Anwendungen oder Systemen zu interagieren.
+\end{itemize}
+
+\section{Rahmenbedingungen}
+\subsection{Projekteinbettung und Auftraggeber}
+Das Projekt \emph{DataTaker} ist nicht in ein größeres Projekt eingebettet, sondern eine eigenständige Arbeit im universitären Kontext. Als \textbf{Auftraggeber} fungiert Arno Kesper und die Projektgruppe selbst, bestehend aus drei Studierenden einer Hochschule, die im Rahmen einer Lehrveranstaltung diese Anwendung konzipieren, um ihre Fähigkeiten in der App-Entwicklung, Softwarearchitektur sowie UX-Design zu demonstrieren. Externe Unternehmen oder Arbeitsgruppen sind nicht beteiligt.
+
+\subsection{Besondere Vorgaben}
+Es existieren keine speziellen formalen oder inhaltlichen Vorgaben seitens der Universität. Die einzigen Richtlinien ergeben sich aus den Lernzielen der Lehrveranstaltung sowie den Anforderungen, die sich die Studierenden selbst gesteckt haben. Qualität, Verständlichkeit und Praktikabilität stehen an oberster Stelle, ohne dass formale Zertifizierungen oder Industriestandards zwingend gefordert sind.
+
+\subsection{Zeitlicher Rahmen}
+Der zeitliche Umfang des Projekts ist begrenzt. Es begann zum Start des Semesters und soll bis ca. \textbf{März} abgeschlossen sein. Der Endtermin ist vor allem von Abgabeterminen innerhalb des universitären Curriculums bestimmt. Dies stellt einen klaren zeitlichen Rahmen für die Fertigstellung der Kernfunktionen, grundlegenden Tests sowie gegebenenfalls eine kurze Evaluationsphase.
+
+\subsection{Qualitätsanforderungen und Skalierbarkeit}
+Obwohl es sich um ein universitäres Projekt handelt, gelten folgende Qualitätsanforderungen:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Stabilität:} Die App sollte unter typischen Nutzungsbedingungen absturzfrei laufen.
+    \item \textbf{Performance:} Reaktionszeiten sollten angenehm kurz sein, auch bei größeren Tabellen oder vielen Bilderfassungen.
+    \item \textbf{Skalierbarkeit:} Das Grundgerüst soll so entworfen sein, dass zukünftige Datentypen oder neue Features leicht integrierbar sind.
+    \item \textbf{Benutzererfahrung:} Eine einfache, intuitive Navigation, übersichtliche Darstellungen und Hilfestellungen bei der Eingabe.
+    \item \textbf{Wartbarkeit:} Durch die Verwendung von TypeScript und einer klaren Architektur soll der Code gut wartbar, erweiterbar und dokumentiert sein.
+\end{itemize}
+
+\subsection{Technische Rahmenbedingungen}
+Die technische Umsetzung basiert auf den folgenden Komponenten:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Frontend:} React Native (Expo), TypeScript für strikte Typisierung und Wartbarkeit.
+    \item \textbf{Backend (lokal):} Expo-SQLite für persistente Datenspeicherung.
+    \item \textbf{Bildverarbeitung:} Expo-Camera zum Erfassen von Bildern, Expo-File-System zum Speichern von Bilddateien.
+    \item \textbf{Export:} JSON- und CSV-Funktionen sind geplant, potenzielle Erweiterung auf ZIP-Archive mit integriertem Bildmaterial.
+\end{itemize}
+
+\end{document}
