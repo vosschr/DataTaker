@@ -10,7 +10,7 @@ export default function VarChooser() {
     function onNewTablePress() {
         router.push("/dataInput");
         console.log("DEBUG: Pushed button to link to data input page.");
-      }
+    }
 
     return (
         <View>
