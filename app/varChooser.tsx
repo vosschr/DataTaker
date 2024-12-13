@@ -1,10 +1,9 @@
-import { View } from 'react-native';
+import { View } from "react-native";
 import { useRouter } from "expo-router";
 
-import DefaultButton from '@/components/defaultButton';
+import DefaultButton from "@/components/defaultButton";
 
 export default function VarChooser() {
-
     const router = useRouter();
 
     function onNewTablePress() {
@@ -14,17 +13,14 @@ export default function VarChooser() {
 
     return (
         <View>
-
             {/* MAIN CONTENT VIEW */}
-            <View>
-                {/* CREATE NEW FIELD BUTTON */}
-            </View>
+            <View>{/* CREATE NEW FIELD BUTTON */}</View>
 
             {/* FOOTER */}
             <View>
                 {/* DONE BUTTON */}
-                <DefaultButton text='Done' onPress={onNewTablePress}/>
+                <DefaultButton text="Done" onPress={onNewTablePress} />
             </View>
         </View>
-    )
+    );
 }

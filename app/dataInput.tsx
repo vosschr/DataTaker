@@ -1,17 +1,13 @@
-import { View } from 'react-native';
+import { View } from "react-native";
 
 export default function DataInput() {
-    return(
+    return (
         <View>
-            
             {/* MAIN CONTENT VIEW */}
-            <View>
-            </View>
+            <View></View>
 
             {/* FOOTER */}
-            <View>
-                {/* DONE BUTTON */}
-            </View>
+            <View>{/* DONE BUTTON */}</View>
         </View>
-    )
+    );
 }
