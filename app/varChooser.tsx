@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { useRouter } from "expo-router";
 
-import DefaultButton from "@/components/defaultButton";
+import DefaultButton from "@/components/DefaultButton";
 
 export default function VarChooser() {
     const router = useRouter();
