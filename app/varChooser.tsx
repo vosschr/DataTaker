@@ -2,7 +2,7 @@ import { useState } from "react";
 import { View, FlatList } from "react-native";
 import { useRouter } from "expo-router";
 
-import DefaultButton from "@/components/defaultButton";
+import DefaultButton from "@/components/DefaultButton";
 import ParameterSelectionField from "@/components/parameterSelectionField";
 import { DataBase } from "@/services/database";
 

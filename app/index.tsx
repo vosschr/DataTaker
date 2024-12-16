@@ -1,23 +1,19 @@
-import { View } from "react-native";
-import { useRouter } from "expo-router";
-
-import DefaultButton from "@/components/defaultButton";
+import { Text, View } from "react-native";
+import PlusButton from "@/components/PlusButton";
+import DataInputField from "@/components/DataInputField";
 
 export default function Index() {
-    const router = useRouter();
-
-    function onNewTablePress() {
-        router.push("/varChooser");
-        console.log("DEBUG: Pushed Button to link to VarChooser.");
-    }
-
-    return (
-        <View>
-            {/* MAIN CONTENT VIEW */}
-            <View>
-                {/* LINK TO VARCHOOSER BUTTON */}
-                <DefaultButton text="+" onPress={onNewTablePress} />
-            </View>
-        </View>
-    );
+  return (
+    <View
+      style={{
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Text>Edit app/index.tsx to edit this screen.</Text>
+      <PlusButton onPress={() => {}} />
+      <DataInputField paramName="Test" />
+    </View>
+  );
 }
