@@ -13,6 +13,7 @@ export default function DataInputField({ paramName }: Props) {
   const [isEditing, setIsEditing] = useState(true);
   //isEditing = true means the editing button is not shown
   return (
+
     <View style={[GlobalStyles.border, styles.container]}>
       {/* View for the Parameter name */}
       <View style={styles.header}>
@@ -45,12 +46,13 @@ export default function DataInputField({ paramName }: Props) {
       </View>
 
     </View>
+
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#c7ede4',
+    backgroundColor: GlobalStyles.thirdColor.backgroundColor,
     width: "80%",
     minHeight: 120,
     borderRadius: 18,
@@ -61,11 +63,13 @@ const styles = StyleSheet.create({
   header: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: '#c7ede4',
+    backgroundColor: GlobalStyles.thirdColor.backgroundColor,
+    borderTopRightRadius: 16,
+    borderTopLeftRadius: 16,
   },
   body: {
     flex: 1,
-    backgroundColor: '#49515b',
+    backgroundColor: GlobalStyles.secondColor.backgroundColor,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
     justifyContent: 'center',

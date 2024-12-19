@@ -2,16 +2,17 @@ import { StyleSheet } from "react-native";
 
 const GlobalStyles = StyleSheet.create({
   container: {
-    backgroundColor: '#25292e'
+    justifyContent: "center",
+    alignItems: "center",
   },
   backgroundColor: {
-
+    backgroundColor: '#25292e' //Gunmetal
   },
   secondColor: {
-
+    backgroundColor: "#49515B" //Charcoal
   },
   thirdColor: {
-
+    backgroundColor: "9FB1BC" //Cadet gray
   },
   text: {
     color: '#000',

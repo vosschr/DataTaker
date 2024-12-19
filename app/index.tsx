@@ -1,19 +1,22 @@
 import { Text, View } from "react-native";
 import PlusButton from "@/components/PlusButton";
 import DataInputField from "@/components/DataInputField";
+import GlobalStyles from "@/styles/globalStyles";
+import { StyleSheet } from "react-native";
 
 export default function Index() {
   return (
     <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      style={[styles.container, GlobalStyles.backgroundColor, GlobalStyles.container]}
     >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-      <PlusButton onPress={() => {}} />
+      <PlusButton onPress={() => { }} />
       <DataInputField paramName="Test" />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }
+});
