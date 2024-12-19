@@ -18,6 +18,7 @@ export default function Button( {onPress }: Props) {
 
 const styles = StyleSheet.create({
     buttonContainer: {
+        alignSelf: "center",
         width: "80%",
         height: 68,
         alignItems: 'center',

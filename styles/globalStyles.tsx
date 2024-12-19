@@ -25,7 +25,7 @@ const GlobalStyles = StyleSheet.create({
     borderWidth: 4,
   },
   title: {
-    color: '#000',
+    color: '#D3D0CB',
     fontSize: 20,
     fontWeight: 'bold',
   },

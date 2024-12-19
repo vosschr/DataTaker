@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignSelf: 'center',
     overflow: 'hidden', // Damit abgerundete Ecken auch für inneren Bereich gelten
+    marginTop: 5, //Abstände zwischen den Button
   },
   header: {
     paddingVertical: 10,

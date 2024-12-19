@@ -17,7 +17,7 @@ export default function RootLayout() {
             />
             <Stack.Screen
                 name="+not-found"
-                options={{ title: "Oops! Not Found" }}
+                options={{ title: "Oops! Not Found", headerTitleAlign: "center" }}
             />
         </Stack>
     );
