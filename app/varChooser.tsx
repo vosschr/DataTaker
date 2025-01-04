@@ -1,9 +1,13 @@
 import { useState } from "react";
-import { View, FlatList } from "react-native";
+import { ScrollView, View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
+import GlobalStyles from "@/styles/globalStyles";
+
 import DefaultButton from "@/components/DefaultButton";
-import ParameterSelectionField from "@/components/parameterSelectionField";
+import PlusButton from "@/components/PlusButton";
+import ParameterSelectionField from "@/components/ParameterSelectionField";
+
 import { DataBase } from "@/services/database";
 
 type Param = {
@@ -65,11 +69,13 @@ export default function VarChooser() {
     };
 
     return (
-        <View>
+        <View
+            style={[styles.container, GlobalStyles.backgroundColor, GlobalStyles.container]}
+        >
             {/* MAIN CONTENT VIEW */}
-            <View>
+            <View style={[styles.container, { width: 300 }]}>
                 {/* CREATE NEW FIELD BUTTON */}
-                <DefaultButton text="+" onPress={addParameterField} />
+                <PlusButton onPress={addParameterField} />
                 {/* Dynamic List of ParameterSelectionFields */}
                 <FlatList
                     data={parameters}
@@ -93,3 +99,9 @@ export default function VarChooser() {
         </View>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    }
+});
