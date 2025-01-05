@@ -16,19 +16,27 @@ export const DataBase = {
         };
      */
     initializeDatabase: async (tableName: string, tableSchema: object) => {
+        console.log("DEBUG: initializing Database.");
+        console.log("DEBUG: talbeName: ", tableName);
+        console.log("DEBUG: tableSchema: ", tableSchema);
         // create empty db with file
         const db = await SQLite.openDatabaseAsync(`${tableName}.db`);
 
         // put together tableSchema string for the SQL query
+        // the quotes around ${column} are necessary in case sql key-words are used as column names
         const columns = Object.entries(tableSchema)
-            .map(([column, type]) => `${column} ${type}`)
+            .map(([column, type]) => `"${column}" ${type}`)
             .join(', ');
+        console.log("DEBUG: columns:", columns);
 
-        // execute query
-        await db.execAsync(`
+        const query = `
 PRAGMA journal_mode = WAL; --Write-Ahead Logging for perfomance boost
 CREATE TABLE IF NOT EXISTS ${tableName} (${columns});
-            `);
+            `;
+        console.log("DEBUG: query: ", query);
+
+        // execute query
+        await db.execAsync(query);
 
         await db.closeAsync();
     },

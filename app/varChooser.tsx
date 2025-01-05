@@ -46,8 +46,12 @@ export default function VarChooser() {
         parameters.forEach((param) => {
             if (param.name && param.type) {
                 tableSchema[param.name] = param.type;
+                console.log("DEBUG: table type:", param.type);
+                console.log("DEBUG: table name:", param.name);
                 console.log("DEBUG: tableSchema:", tableSchema);
             } else {
+                console.log("DEBUG: table type:", param.type);
+                console.log("DEBUG: table name:", param.name);
                 console.log(
                     "DEBUG: Either param.name or param.type are missing"
                 );
