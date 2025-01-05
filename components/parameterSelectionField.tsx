@@ -26,6 +26,7 @@ export default function ParameterSelectionField({
                 selectedValue={paramType}
                 onValueChange={onTypeChange}
             >
+                <Picker.Item label="Please Select a Type" value="" />
                 <Picker.Item label="TEXT" value="TEXT" />
                 <Picker.Item label="INTEGER" value="INTEGER" />
             </Picker>
