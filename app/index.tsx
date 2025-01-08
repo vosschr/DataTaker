@@ -1,8 +1,10 @@
 import { View, ScrollView, StyleSheet  } from "react-native";
+import { useRouter } from "expo-router";
+
+import GlobalStyles from "@/styles/globalStyles";
+
 import PlusButton from "@/components/PlusButton";
 import DataInputField from "@/components/DataInputField";
-import GlobalStyles from "@/styles/globalStyles";
-import { useRouter } from "expo-router";
 
 export default function Index() {
   const router = useRouter();
@@ -18,9 +20,6 @@ export default function Index() {
         {/* Plus Button to start new Table setup (link to varChooser) */}
         <PlusButton onPress={onPlusPress} />
 
-        {/* following for Test purposes */}
-        <DataInputField paramName=" !Test: Schuhgröße" />
-        
       </ScrollView>
     </View>
   );
