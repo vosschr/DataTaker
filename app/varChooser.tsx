@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ScrollView, View, FlatList, StyleSheet } from "react-native";
+import { Text, View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 import GlobalStyles from "@/styles/globalStyles";
@@ -17,6 +17,14 @@ type Param = {
 
 export default function VarChooser() {
     const router = useRouter();
+
+    const currentDateWithTime = new Date()
+        .toISOString()
+        .replace(/T/, "_") // Replace 'T' with an underscore
+        .replace(/:/g, "-") // Replace ':' with a dash
+        .split(".")[0]; // Remove the milliseconds part
+
+    const [tableName, setTableName] = useState<string>("newTableNameDefault_" + currentDateWithTime);
 
     // state to hold the dynamically added fields
     const [parameters, setParameters] = useState<Param[]>([]);
@@ -41,6 +49,8 @@ export default function VarChooser() {
             return;
         }
 
+        // TODO: check if there is a db with the same name and act accordingly
+
         // transform the parameters into a schema
         const tableSchema: { [key: string]: string } = {};
         parameters.forEach((param) => {
@@ -58,14 +68,11 @@ export default function VarChooser() {
             }
         });
 
-        // table name (could be provided by the user or fixed for now)
-        const tableName = "my_new_table";
-
         try {
             // initialize the database table with the schema
             await DataBase.initializeDatabase(tableName, tableSchema);
             console.log("DEBUG: Database table created successfully!");
-            router.push("/dataInput"); // navigate to data input page
+            router.push(`/dataInput?tableName=${encodeURIComponent(tableName)}`); // navigate to data input page
             console.log("DEBUG: Pushed button to link to data input page.");
         } catch (error) {
             console.error("Error creating database table:", error);

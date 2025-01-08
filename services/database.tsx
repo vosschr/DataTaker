@@ -31,7 +31,7 @@ export const DataBase = {
 
         const query = `
 PRAGMA journal_mode = WAL; --Write-Ahead Logging for perfomance boost
-CREATE TABLE IF NOT EXISTS ${tableName} (${columns});
+CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
             `;
         console.log("DEBUG: query: ", query);
 

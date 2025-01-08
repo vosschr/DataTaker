@@ -4,7 +4,6 @@ import { useRouter } from "expo-router";
 import GlobalStyles from "@/styles/globalStyles";
 
 import PlusButton from "@/components/PlusButton";
-import DataInputField from "@/components/DataInputField";
 
 export default function Index() {
   const router = useRouter();
