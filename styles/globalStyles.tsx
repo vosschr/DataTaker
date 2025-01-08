@@ -6,7 +6,7 @@ const GlobalStyles = StyleSheet.create({
     alignItems: "center",
   },
   backgroundColor: {
-    backgroundColor: '#25292e' //Gunmetal
+    backgroundColor: "lightgrey", // for testing while not finished //'#25292e' //Gunmetal
   },
   secondColor: {
     backgroundColor: "#49515B" //Charcoal

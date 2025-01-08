@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Text, View, FlatList, StyleSheet } from "react-native";
+import { TextInput, View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 
 import GlobalStyles from "@/styles/globalStyles";
@@ -24,7 +24,7 @@ export default function VarChooser() {
         .replace(/:/g, "-") // Replace ':' with a dash
         .split(".")[0]; // Remove the milliseconds part
 
-    const [tableName, setTableName] = useState<string>("newTableNameDefault_" + currentDateWithTime);
+    const [tableName, setTableName] = useState<string>("newTable_" + currentDateWithTime);
 
     // state to hold the dynamically added fields
     const [parameters, setParameters] = useState<Param[]>([]);
@@ -85,8 +85,16 @@ export default function VarChooser() {
         >
             {/* MAIN CONTENT VIEW */}
             <View style={[styles.container, { width: 300 }]}>
+                {/* TABLE NAME TEXTINPUT FIELD */}
+                <TextInput
+                    placeholder="Enter table name"
+                    value={tableName}
+                    onChangeText={(text) => setTableName(text)} // Update state on text change
+                />
+
                 {/* CREATE NEW FIELD BUTTON */}
                 <PlusButton onPress={addParameterField} />
+
                 {/* Dynamic List of ParameterSelectionFields */}
                 <FlatList
                     data={parameters}
@@ -100,6 +108,7 @@ export default function VarChooser() {
                         />
                     )}
                 />
+                
             </View>
 
             {/* FOOTER */}

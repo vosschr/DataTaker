@@ -3,6 +3,15 @@
  */
 import * as SQLite from 'expo-sqlite';
 
+type TableInfo = {
+    cid: number;
+    name: string;
+    type: string;
+    notnull: number;
+    dflt_value: string | null;
+    pk: number;
+}
+
 export const DataBase = {
     /** creating a database with one table (aka flat db)
      * 
@@ -94,4 +103,61 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         //TODO: warning for deleting database
         await SQLite.deleteDatabaseAsync(tableName); // might require some permissions
     },
+
+    /**
+     * * Retrieves the schema information (columns) of a given table in the database.
+    * 
+    * This method executes a `PRAGMA table_info()` query to fetch detailed information 
+    * about the columns of the specified table, such as column names, types, default values,
+    * and whether the column is part of the primary key.
+    *
+    * @param tableName - The name of the table whose column information is to be retrieved.
+    *                    This table name should match the name used during database creation.
+    * 
+    * @returns - A promise that resolves to an array of `TableInfo` objects, each representing
+    *            a column in the table. The `TableInfo` objects contain the following properties:
+    *            - `cid`: The column ID (integer).
+    *            - `name`: The name of the column (string).
+    *            - `type`: The type of the column (string).
+    *            - `notnull`: A flag indicating whether the column is `NOT NULL` (integer).
+    *            - `dflt_value`: The default value of the column (string or null).
+    *            - `pk`: A flag indicating whether the column is part of the primary key (integer).
+    *
+    *            Example of the returned structure:
+    *            [
+    *              {
+    *                cid: 0,
+    *                name: "id",
+    *                type: "INTEGER",
+    *                notnull: 1,
+    *                dflt_value: null,
+    *                pk: 1
+    *              },
+    *              ...
+    *            ]
+    *
+    * @example
+    * // Example usage of `getColumns` method
+    * const columns = await DataBase.getColumns("users");
+    * console.log(columns); // Logs an array of column details for the "users" table
+    */
+    getColumns: async (tableName: string) => {
+        //TODO: check if db and table exist
+        //TODO: check matching table schema to record
+        try {
+            // Open the database
+            const db = await SQLite.openDatabaseAsync(`${tableName}.db`);
+    
+            // Execute the PRAGMA query and await the result
+            const result: TableInfo[] = await db.getAllAsync(`PRAGMA table_info(${tableName});`);
+    
+            // Log the result for testing
+            console.log(result);
+    
+            return result; // Return the result for further use
+        } catch (error) {
+            console.error("Error getting columns:", error);
+            throw error; // Rethrow the error to handle it in the caller
+        }
+    }
 }
