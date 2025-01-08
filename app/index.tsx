@@ -4,6 +4,8 @@ import DataInputField from "@/components/DataInputField";
 import GlobalStyles from "@/styles/globalStyles";
 import { useRouter } from "expo-router";
 
+import Camera from "@/components/Camera";
+
 export default function Index() {
   const router = useRouter();
 
@@ -17,10 +19,8 @@ export default function Index() {
       <ScrollView>
         {/* Plus Button to start new Table setup (link to varChooser) */}
         <PlusButton onPress={onPlusPress} />
-
-        {/* following for Test purposes */}
-        <DataInputField paramName=" !Test: Schuhgröße" />
         
+        <Camera />
       </ScrollView>
     </View>
   );
