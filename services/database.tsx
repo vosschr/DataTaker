@@ -3,7 +3,7 @@
  */
 import * as SQLite from 'expo-sqlite';
 
-type TableInfo = {
+export type TableInfo = {
     cid: number;
     name: string;
     type: string;
@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         //TODO: read table with sql query
         //TODO: convert to object and return
         //temporary test query:
-        const allRows: object[] = await db.getAllAsync(`SELECT * FROM ${tableName};`);
+        const allRows: object[] = await db.getAllAsync(`SELECT * FROM [${tableName}];`);
         for (const row of allRows) { // iterate through all rows
             for (const [key, value] of Object.entries(row)) {  // iterate through all columns
                 console.log(`${key}: ${value}`);  // test console output
@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         const values = Object.values(record);
         const placeholders = Object.keys(record).map(() => '?').join(', ');
 
-        const sql = `INSERT INTO ${tableName} (${columns}) VALUES (${placeholders});`;
+        const sql = `INSERT INTO [${tableName}] (${columns}) VALUES (${placeholders});`;
         //example: "INSERT INTO animals (name, age, type) VALUES (?, ?, ?)"
         //the '?' will be replaced by the values (e.g. 'Findus', 12, 'Cat')
 
@@ -149,7 +149,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
             const db = await SQLite.openDatabaseAsync(`${tableName}.db`);
     
             // Execute the PRAGMA query and await the result
-            const result: TableInfo[] = await db.getAllAsync(`PRAGMA table_info(${tableName});`);
+            const result: TableInfo[] = await db.getAllAsync(`PRAGMA table_info([${tableName}]);`);
     
             // Log the result for testing
             console.log(result);
