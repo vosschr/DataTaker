@@ -44,6 +44,7 @@ This is our app for the Fortgeschrittenen Praktikum.
    npm install expo-router expo-sqlite expo-camera expo-file-system @react-native-picker/picker
    ```
    > Note: `react` and `react-native` are installed automatically.
+   > If working in VSCode you might need to restart the TypeScript server by pressing `Ctrl + Shift + P` while having a `.tsx` file focused in the editor and selecting `TypeScript: Restart TS Server`.
 
 7. **Set Up Android Studio (Optional)**
    - Download and install [Android Studio](https://developer.android.com/studio) to use a virtual Android phone.
