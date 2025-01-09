@@ -6,6 +6,7 @@ import GlobalStyles from "@/styles/globalStyles";
 
 import { DataBase, TableInfo } from "@/services/database";
 
+import DefaultButton from "@/components/DefaultButton";
 import DataInputField from "@/components/DataInputField";
 
 type Param = {
@@ -44,6 +45,21 @@ export default function DataInput() {
     useEffect(() => {loadDataInputFields();}, []); // this method is run when the page is loaded,
     // the empty dependency list makes it only start once
 
+    const onNextButton = () => {
+        //TODO
+        // check for missing params -> warnings
+        // add current params to db
+        // ALTERNATIVELY: save current params in buffer, to add all of them together then done button is pressed
+        // push new dataInput Window on Stack
+    }
+
+    const onDoneButton = () => {
+        //TODO
+        // check for missing params -> warnings
+        // add current params to db
+        // push index on stack
+    }
+
     return (
         <View
             style={[styles.container, GlobalStyles.backgroundColor, GlobalStyles.container]}
@@ -64,7 +80,12 @@ export default function DataInput() {
             </View>
 
             {/* FOOTER */}
-            <View>{/* DONE BUTTON */}</View>
+            <View>
+                {/* DONE BUTTON */}
+                <DefaultButton text="Done" onPress={onDoneButton}/>
+                {/* NEXT BUTTON */}
+                <DefaultButton text="Next" onPress={onNextButton}/>
+            </View>
         </View>
     );
 }
