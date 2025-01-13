@@ -2,6 +2,7 @@
  * DAO (Database access object) for creating and manipulating flat databases using expo-sqlite
  */
 import * as SQLite from 'expo-sqlite';
+import * as FileSystem from 'expo-file-system';
 
 export type TableInfo = {
     cid: number;
@@ -11,6 +12,9 @@ export type TableInfo = {
     dflt_value: string | null;
     pk: number;
 }
+
+const TABLE_DIR = `${FileSystem.documentDirectory}DataTaker/tables/`;
+const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
 
 export const DataBase = {
     /** creating a database with one table (aka flat db)
@@ -26,10 +30,25 @@ export const DataBase = {
      */
     initializeDatabase: async (tableName: string, tableSchema: object) => {
         console.log("DEBUG: initializing Database.");
+
+        // create tables directory
+        const folderInfo = await FileSystem.getInfoAsync(TABLE_DIR);
+        if (!folderInfo.exists) {
+            console.log("DEBUG: creating tables directory.");
+            await FileSystem.makeDirectoryAsync(TABLE_DIR, { intermediates: true });
+        }
+
+        // create data directory
+        const folderInfo2 = await FileSystem.getInfoAsync(DATA_DIR);
+        if (!folderInfo2.exists) {
+            console.log("DEBUG: creating data directory.");
+            await FileSystem.makeDirectoryAsync(DATA_DIR, { intermediates: true });
+        }
         console.log("DEBUG: talbeName: ", tableName);
         console.log("DEBUG: tableSchema: ", tableSchema);
+
         // create empty db with file
-        const db = await SQLite.openDatabaseAsync(`${tableName}.db`);
+        const db = await SQLite.openDatabaseAsync(`${TABLE_DIR}${tableName}.db`);
 
         // put together tableSchema string for the SQL query
         // the quotes around ${column} are necessary in case sql key-words are used as column names
@@ -57,7 +76,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
     */
     query: async (tableName: string) => {
         //TODO: check if db and table exist
-        const db = await SQLite.openDatabaseAsync(`${tableName}.db`); // open db
+        const db = await SQLite.openDatabaseAsync(`${TABLE_DIR}${tableName}.db`); // open db
         //TODO: read table with sql query
         //TODO: convert to object and return
         //temporary test query:
@@ -83,7 +102,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
     addRow: async (tableName: string, record: object) => {
         //TODO: check if db and table exist
         //TODO: check matching table schema to record
-        const db = await SQLite.openDatabaseAsync(`${tableName}.db`); // open db
+        const db = await SQLite.openDatabaseAsync(`${TABLE_DIR}${tableName}.db`); // open db
 
         // convert object to strings used for query
         const columns = Object.keys(record).join(', ');
@@ -146,7 +165,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         //TODO: check matching table schema to record
         try {
             // Open the database
-            const db = await SQLite.openDatabaseAsync(`${tableName}.db`);
+            const db = await SQLite.openDatabaseAsync(`${TABLE_DIR}${tableName}.db`);
     
             // Execute the PRAGMA query and await the result
             const result: TableInfo[] = await db.getAllAsync(`PRAGMA table_info([${tableName}]);`);
