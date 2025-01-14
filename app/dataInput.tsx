@@ -21,48 +21,57 @@ export default function DataInput() {
     // state to hold the fields
     const [parameters, setParameters] = useState<Param[]>([]);
 
-    const loadDataInputFields = async () => {
+    async function loadDataInputFields() {
         // Ensure tableName is a string
         if (typeof tableName === "string") {
             const columns: TableInfo[] = await DataBase.getColumns(tableName);
-    
+
             // Create a new array of parameters from the columns
             const newParameters: Param[] = columns.map((col) => ({
                 name: col.name,
                 type: col.type,
             }));
-    
+
             // Update the state once with the new array
             setParameters(newParameters);
-    
+
             // Log the new parameters for debugging
             console.log(`New Parameters: ${newParameters}`);
         } else {
-            console.error("Invalid tableName: Expected a string but got ", tableName);
+            console.error(
+                "Invalid tableName: Expected a string but got ",
+                tableName
+            );
         }
     };
 
-    useEffect(() => {loadDataInputFields();}, []); // this method is run when the page is loaded,
+    useEffect(() => {
+        loadDataInputFields();
+    }, []); // this method is run when the page is loaded,
     // the empty dependency list makes it only start once
 
-    const onNextButton = () => {
+    function onNextButton() {
         //TODO
         // check for missing params -> warnings
         // add current params to db
         // ALTERNATIVELY: save current params in buffer, to add all of them together then done button is pressed
         // push new dataInput Window on Stack
-    }
+    };
 
-    const onDoneButton = () => {
+    function onDoneButton() {
         //TODO
         // check for missing params -> warnings
         // add current params to db
         // push index on stack
-    }
+    };
 
     return (
         <View
-            style={[styles.container, GlobalStyles.backgroundColor, GlobalStyles.container]}
+            style={[
+                styles.container,
+                GlobalStyles.backgroundColor,
+                GlobalStyles.container,
+            ]}
         >
             {/* MAIN CONTENT VIEW */}
             <View>
@@ -74,7 +83,10 @@ export default function DataInput() {
                         <Text>
                             {param.name} ({param.type})
                         </Text>
-                        <DataInputField paramName={param.name} paramType={param.type}/>
+                        <DataInputField
+                            paramName={param.name}
+                            paramType={param.type}
+                        />
                     </View>
                 ))}
             </View>
@@ -82,16 +94,16 @@ export default function DataInput() {
             {/* FOOTER */}
             <View>
                 {/* DONE BUTTON */}
-                <DefaultButton text="Done" onPress={onDoneButton}/>
+                <DefaultButton text="Done" onPress={onDoneButton} />
                 {/* NEXT BUTTON */}
-                <DefaultButton text="Next" onPress={onNextButton}/>
+                <DefaultButton text="Next" onPress={onNextButton} />
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
+    container: {
+        flex: 1,
+    },
 });

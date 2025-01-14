@@ -136,7 +136,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
     deleteDatabase: async (tableName: string) => {
         //TODO: warning for deleting database
-        await SQLite.deleteDatabaseAsync(tableName); // might require some permissions
+        await SQLite.deleteDatabaseAsync(tableName, TABLE_DIR); // might require some permissions
     },
 
     /**
