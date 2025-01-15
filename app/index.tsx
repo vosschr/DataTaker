@@ -1,21 +1,22 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Text, View, ScrollView, StyleSheet } from "react-native";
-import { useRouter } from "expo-router";
+import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import { Picker } from "@react-native-picker/picker";
 
 import GlobalStyles from "@/styles/globalStyles";
 
 import PlusButton from "@/components/PlusButton";
-import DefaultButton from "@/components/DefaultButton";
 
-//import { TABLE_DIR } from "@/services/database";
+import { DataBase } from "@/services/database";
+
+//import { TABLE_DIR, DATA_DIR } from "@/services/database";
 const TABLE_DIR = `${FileSystem.documentDirectory}DataTaker/tables/`;
+const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
+
 
 export default function Index() {
     const router = useRouter();
-
-    const pickerRef = useRef();  // reference to open/close the picker
 
     // useState to store tables read from files
     const [tables, setTables] = useState<string[]>([]);
@@ -24,8 +25,28 @@ export default function Index() {
         router.push("/varChooser");
     };
 
+    async function setUpFolders() {
+        // create tables directory
+        const folderInfo = await FileSystem.getInfoAsync(TABLE_DIR);
+        if (!folderInfo.exists) {
+            console.log("DEBUG: creating tables directory.");
+            await FileSystem.makeDirectoryAsync(TABLE_DIR, {
+                intermediates: true,
+            });
+        }
+
+        // create data directory
+        const folderInfo2 = await FileSystem.getInfoAsync(DATA_DIR);
+        if (!folderInfo2.exists) {
+            console.log("DEBUG: creating data directory.");
+            await FileSystem.makeDirectoryAsync(DATA_DIR, {
+                intermediates: true,
+            });
+        }
+    }
+
     /**
-     * Fetches the names of all tables stored in a specified directory.
+     * Fetches the names of all expo-sqlite .db files stored in a specified directory.
      */
     async function fetchTables() {
         try {
@@ -35,8 +56,29 @@ export default function Index() {
                 console.log("DEBUG: there is no such directory yet.");
                 return;
             }
-            const tableNames: string[] = await FileSystem.readDirectoryAsync(TABLE_DIR);
-            setTables(tableNames);
+
+            // Get all files in the directory
+            const allFiles: string[] = await FileSystem.readDirectoryAsync(TABLE_DIR);
+
+            console.log("DEBUG: allFiles: ", allFiles);
+
+            // Filter files that end with `.db`
+            const dbFiles = await Promise.all(
+                allFiles
+                    .filter((file) => file.endsWith(".db"))
+                    .map(async (file) => {
+                        // Strip the ".db" extension from the file name
+                        const dbName = file.replace(/\.db$/, "");
+            
+                        // TODO: validate the database
+                        return dbName;
+                    })
+            );
+            
+            // Remove null entries and update state
+            const validDbFiles = dbFiles.filter((dbName) => dbName !== null) as string[];
+            setTables(validDbFiles);
+            console.log("DEBUG: validDbFiles: ", validDbFiles);
         } catch (error) {
             console.error("Error reading directory: ", error);
         }
@@ -44,11 +86,34 @@ export default function Index() {
 
     // this method is run on startup:
     useEffect(() => {
-        fetchTables();
+        setUpFolders();  // create folders for tables and data if they don't exist
+        fetchTables();  // read tables folder to show the tables on home screen
     }, []);
 
-    function onTableButtonPress(tableName: string) {
-        //TODO: open options menu for the table with delete/output/add-data options. (maybe also add-column/share/clone.. options)
+    // this method is run everytime the index screen is navigated to (e.g. on "back to home")
+    useFocusEffect(
+        useCallback(() => {
+            fetchTables();  // read tables folder to show the tables on home screen
+        }, []) // empty dependency array since fetchTables is likely stable
+    );
+
+    async function handlePickerAction(action: string, tableName: string) {
+        switch (action) {
+            case "take data":
+                console.log("DEBUG: " + action + " on " + tableName + ".");
+                router.push(
+                    `/dataInput?tableName=${encodeURIComponent(tableName)}`
+                ); // navigate to data input page
+                break;
+            case "delete":
+                //TODO: fix bug: doesn't work if take data was previously selected
+                console.log("DEBUG: delete " + tableName + ".");
+                setTables([]);
+                DataBase.deleteDatabase(tableName);
+                fetchTables();
+                break;
+            //TODO: add more
+        }
     }
 
     return (
@@ -64,7 +129,19 @@ export default function Index() {
                 <PlusButton onPress={onPlusPress} />
                 {/* TABLES */}
                 {tables.map((table, index) => (
-                    <DefaultButton text={table} onPress={() => {onTableButtonPress(table)}} key={index}/>
+                    <View key={index}>
+                        <Text>{table}</Text>
+                        <Picker
+                            selectedValue=""
+                            onValueChange={(value) => {
+                                if (value && table) handlePickerAction(value, table);
+                            }}
+                        >
+                            <Picker.Item label={table} value="" />
+                            <Picker.Item label="Take Data" value="take data" />
+                            <Picker.Item label="Delete Table" value="delete" />
+                        </Picker>
+                    </View>
                 ))}
             </ScrollView>
         </View>

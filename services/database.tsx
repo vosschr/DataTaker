@@ -30,24 +30,6 @@ export const DataBase = {
      */
     initializeDatabase: async (tableName: string, tableSchema: object) => {
         console.log("DEBUG: initializing Database.");
-
-        // create tables directory
-        const folderInfo = await FileSystem.getInfoAsync(TABLE_DIR);
-        if (!folderInfo.exists) {
-            console.log("DEBUG: creating tables directory.");
-            await FileSystem.makeDirectoryAsync(TABLE_DIR, {
-                intermediates: true,
-            });
-        }
-
-        // create data directory
-        const folderInfo2 = await FileSystem.getInfoAsync(DATA_DIR);
-        if (!folderInfo2.exists) {
-            console.log("DEBUG: creating data directory.");
-            await FileSystem.makeDirectoryAsync(DATA_DIR, {
-                intermediates: true,
-            });
-        }
         console.log("DEBUG: talbeName: ", tableName);
         console.log("DEBUG: tableSchema: ", tableSchema);
 
@@ -136,7 +118,16 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
     deleteDatabase: async (tableName: string) => {
         //TODO: warning for deleting database
-        await SQLite.deleteDatabaseAsync(tableName, TABLE_DIR); // might require some permissions
+        console.log("DEBUG: deleting ", tableName)
+        await SQLite.deleteDatabaseAsync(`${TABLE_DIR}${tableName}.db`); // might require some permissions
+        const fileInfo = await FileSystem.getInfoAsync(`${TABLE_DIR}${tableName}.db`);
+        
+        if (fileInfo.exists) {
+            console.error("Database deletion failed - file still exists");
+            return false;
+        } else {
+            console.log("DEBUG: deletion successful.");
+        }
     },
 
     /**
@@ -189,6 +180,8 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
             const result: TableInfo[] = await db.getAllAsync(
                 `PRAGMA table_info([${tableName}]);`
             );
+
+            db.closeAsync();
 
             // Log the result for testing
             console.log(result);
