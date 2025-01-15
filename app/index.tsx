@@ -14,7 +14,6 @@ import { DataBase } from "@/services/database";
 const TABLE_DIR = `${FileSystem.documentDirectory}DataTaker/tables/`;
 const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
 
-
 export default function Index() {
     const router = useRouter();
 
@@ -23,7 +22,7 @@ export default function Index() {
 
     function onPlusPress() {
         router.push("/varChooser");
-    };
+    }
 
     async function setUpFolders() {
         // create tables directory
@@ -58,7 +57,9 @@ export default function Index() {
             }
 
             // Get all files in the directory
-            const allFiles: string[] = await FileSystem.readDirectoryAsync(TABLE_DIR);
+            const allFiles: string[] = await FileSystem.readDirectoryAsync(
+                TABLE_DIR
+            );
 
             console.log("DEBUG: allFiles: ", allFiles);
 
@@ -69,14 +70,16 @@ export default function Index() {
                     .map(async (file) => {
                         // Strip the ".db" extension from the file name
                         const dbName = file.replace(/\.db$/, "");
-            
+
                         // TODO: validate the database
                         return dbName;
                     })
             );
-            
+
             // Remove null entries and update state
-            const validDbFiles = dbFiles.filter((dbName) => dbName !== null) as string[];
+            const validDbFiles = dbFiles.filter(
+                (dbName) => dbName !== null
+            ) as string[];
             setTables(validDbFiles);
             console.log("DEBUG: validDbFiles: ", validDbFiles);
         } catch (error) {
@@ -86,14 +89,14 @@ export default function Index() {
 
     // this method is run on startup:
     useEffect(() => {
-        setUpFolders();  // create folders for tables and data if they don't exist
-        fetchTables();  // read tables folder to show the tables on home screen
+        setUpFolders(); // create folders for tables and data if they don't exist
+        fetchTables(); // read tables folder to show the tables on home screen
     }, []);
 
     // this method is run everytime the index screen is navigated to (e.g. on "back to home")
     useFocusEffect(
         useCallback(() => {
-            fetchTables();  // read tables folder to show the tables on home screen
+            fetchTables(); // read tables folder to show the tables on home screen
         }, []) // empty dependency array since fetchTables is likely stable
     );
 
@@ -112,6 +115,8 @@ export default function Index() {
                 DataBase.deleteDatabase(tableName);
                 fetchTables();
                 break;
+            case "export":
+            //TODO: export .csv
             //TODO: add more
         }
     }
@@ -134,12 +139,14 @@ export default function Index() {
                         <Picker
                             selectedValue=""
                             onValueChange={(value) => {
-                                if (value && table) handlePickerAction(value, table);
+                                if (value && table)
+                                    handlePickerAction(value, table);
                             }}
                         >
                             <Picker.Item label={table} value="" />
                             <Picker.Item label="Take Data" value="take data" />
                             <Picker.Item label="Delete Table" value="delete" />
+                            <Picker.Item label="Export .csv" value="export" />
                         </Picker>
                     </View>
                 ))}

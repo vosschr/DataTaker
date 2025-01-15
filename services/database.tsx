@@ -118,10 +118,12 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
     deleteDatabase: async (tableName: string) => {
         //TODO: warning for deleting database
-        console.log("DEBUG: deleting ", tableName)
+        console.log("DEBUG: deleting ", tableName);
         await SQLite.deleteDatabaseAsync(`${TABLE_DIR}${tableName}.db`); // might require some permissions
-        const fileInfo = await FileSystem.getInfoAsync(`${TABLE_DIR}${tableName}.db`);
-        
+        const fileInfo = await FileSystem.getInfoAsync(
+            `${TABLE_DIR}${tableName}.db`
+        );
+
         if (fileInfo.exists) {
             console.error("Database deletion failed - file still exists");
             return false;
