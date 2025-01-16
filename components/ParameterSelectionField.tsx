@@ -1,5 +1,5 @@
-import { View, TextInput } from "react-native";
-import { Picker } from "@react-native-picker/picker";
+import { View } from "react-native";
+import { TextInput, SegmentedButtons } from "react-native-paper";
 
 export default function ParameterSelectionField({
     paramName,
@@ -13,23 +13,37 @@ export default function ParameterSelectionField({
     onTypeChange: (value: string) => void;
 }) {
     return (
-        <View>
+        <View style={{ marginVertical: 10, marginHorizontal: 10,}}>
+            {/* Choose parameter type */}
+            
+            <SegmentedButtons
+                style={{marginBottom: 3}}
+                density= "medium"
+                value={paramType}
+                onValueChange={onTypeChange}
+                buttons={[
+                    {
+                        value: 'TEXT',
+                        label: 'Text',
+                        icon: "format-text",
+                    },
+                    {
+                        value: 'INTEGER',
+                        label: 'Integer',
+                        icon: "numeric",
+                    },
+                ]}
+            />
+
+
             {/* Input for Parameter Name */}
             <TextInput
-                placeholder="Parameter Name"
+                mode="flat"
+                label="Name of parameter"
+                placeholder="Type something"
                 value={paramName}
                 onChangeText={onNameChange}
             />
-
-            {/* Dropdown for Parameter Type */}
-            <Picker
-                selectedValue={paramType}
-                onValueChange={onTypeChange}
-            >
-                <Picker.Item label="Please Select a Type" value="" />
-                <Picker.Item label="TEXT" value="TEXT" />
-                <Picker.Item label="INTEGER" value="INTEGER" />
-            </Picker>
         </View>
     );
 }
