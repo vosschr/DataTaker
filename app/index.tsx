@@ -90,7 +90,7 @@ export default function Index() {
     // this method is run on startup:
     useEffect(() => {
         setUpFolders(); // create folders for tables and data if they don't exist
-        fetchTables(); // read tables folder to show the tables on home screen
+        //fetchTables(); // read tables folder to show the tables on home screen
     }, []);
 
     // this method is run everytime the index screen is navigated to (e.g. on "back to home")
@@ -116,7 +116,9 @@ export default function Index() {
                 fetchTables();
                 break;
             case "export":
-            //TODO: export .csv
+                DataBase.queryAll(tableName);
+                //TODO: export .csv
+                break;
             //TODO: add more
         }
     }
