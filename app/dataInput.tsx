@@ -12,7 +12,9 @@ import DataInputField from "@/components/DataInputField";
 type Param = {
     name: string;
     type: string;
+    value: string;
 };
+// TODO make this work for things other than string with type checking etc.
 
 export default function DataInput() {
     // the table name is passed when dataInput.tsx is pushed on the stack (by varChooser), we have to fetch it like this:
@@ -30,6 +32,7 @@ export default function DataInput() {
             const newParameters: Param[] = columns.map((col) => ({
                 name: col.name,
                 type: col.type,
+                value: "", // default value
             }));
 
             // Update the state once with the new array
@@ -49,6 +52,21 @@ export default function DataInput() {
         loadDataInputFields();
     }, []); // this method is run when the page is loaded,
     // the empty dependency list makes it only start once
+
+    /** Updates the value for a parameter with name paramName to newValue.
+     * 
+     * @param paramName string - name of the parameter
+     * @param newValue string - new value
+     */
+    function onDataInputUpdate(paramName: string, newValue: string) {
+        setParameters(prevValues => 
+            prevValues.map(param => 
+                param.name === paramName 
+                    ? { ...param, value: newValue }
+                    : param
+            )
+        );
+    }
 
     function onNextButton() {
         //TODO
@@ -86,6 +104,8 @@ export default function DataInput() {
                         <DataInputField
                             paramName={param.name}
                             paramType={param.type}
+                            value={param.value}
+                            onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
                         />
                     </View>
                 ))}
