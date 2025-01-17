@@ -57,30 +57,47 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         await db.closeAsync();
     },
 
-    /** reading data from table tableName
+    
+    /** Reading data from table tableName.
      *
      * @param tableName - string name of the table (that is also by default the database name)
-     * @returns - table in object form
+     * @returns - Promise<object[]> table
      */
-    query: async (tableName: string) => {
-        //TODO: check if db and table exist
+    queryAll: async (tableName: string): Promise<object[]> => {
+        // Check if db and table exist
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
-        ); // open db
-        //TODO: read table with sql query
-        //TODO: convert to object and return
-        //temporary test query:
-        const allRows: object[] = await db.getAllAsync(
-            `SELECT * FROM [${tableName}];`
         );
-        for (const row of allRows) {
-            // iterate through all rows
-            for (const [key, value] of Object.entries(row)) {
-                // iterate through all columns
-                console.log(`${key}: ${value}`); // test console output
+
+        try {
+            // First verify table exists
+            const tableExists = await db.getFirstAsync(
+                `SELECT name FROM sqlite_master WHERE type='table' AND name=?;`,
+                [tableName]
+            );
+            
+            if (!tableExists) {
+                throw new Error(`Table ${tableName} does not exist`);
             }
+
+            // Get all rows from the table
+            const allRows: object[] = await db.getAllAsync(
+                `SELECT * FROM [${tableName}];`
+            );
+
+            return allRows;
+        } catch (error) {
+            let message;
+            if (error instanceof Error) {
+                message = error.message;
+            }
+	        else {
+                message = String(error);
+            }
+            throw new Error(`Failed to query table ${tableName}: ${message}`);
+        } finally {
+            await db.closeAsync();
         }
-        await db.closeAsync();
     },
 
     /** adding data to a given table
