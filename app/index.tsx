@@ -9,6 +9,7 @@ import GlobalStyles from "@/styles/globalStyles";
 import PlusButton from "@/components/PlusButton";
 
 import { DataBase } from "@/services/database";
+import FileManager from "@/services/fileManager";
 
 //import { TABLE_DIR, DATA_DIR } from "@/services/database";
 const TABLE_DIR = `${FileSystem.documentDirectory}DataTaker/tables/`;
@@ -109,15 +110,21 @@ export default function Index() {
                 ); // navigate to data input page
                 break;
             case "delete":
-                //TODO: fix bug: doesn't work if take data was previously selected
                 console.log("DEBUG: delete " + tableName + ".");
                 setTables([]);
                 DataBase.deleteDatabase(tableName);
                 fetchTables();
                 break;
             case "export":
-                DataBase.queryAll(tableName);
-                //TODO: export .csv
+                console.log("DEBUG: pressed \"Export .scv\"");
+                try {
+                    console.log("DEBUG: exporting " + tableName + ".");
+                    const tableObject: object[] = await DataBase.queryAll(tableName); // Wait for the Promise to resolve
+                    const filePath = await FileManager.outputCSV(tableObject); // Wait for CSV to be written
+                    console.log(`CSV file exported at: ${filePath}`);
+                } catch (error) {
+                    console.error(`Error exporting table ${tableName}:`, error);
+                }
                 break;
             //TODO: add more
         }
@@ -139,10 +146,11 @@ export default function Index() {
                     <View key={index}>
                         <Text>{table}</Text>
                         <Picker
-                            selectedValue=""
+                            selectedValue={null}
                             onValueChange={(value) => {
-                                if (value && table)
+                                if (value) {
                                     handlePickerAction(value, table);
+                                }
                             }}
                         >
                             <Picker.Item label={table} value="" />
