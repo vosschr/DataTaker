@@ -25,25 +25,27 @@ export default function VarChooser() {
         .replace(/:/g, "-") // Replace ':' with a dash
         .split(".")[0]; // Remove the milliseconds part
 
-    const [tableName, setTableName] = useState<string>("newTable_" + currentDateWithTime);
+    const [tableName, setTableName] = useState<string>(
+        "newTable_" + currentDateWithTime
+    );
 
     // state to hold the dynamically added fields
     const [parameters, setParameters] = useState<Param[]>([]);
 
     // function to add a new empty parameter field
-    const addParameterField = () => {
+    function addParameterField() {
         setParameters([...parameters, { name: "", type: "" }]);
     };
 
     // function to update a specific parameter
-    const updateParameter = (index: number, key: string, value: string) => {
+    function updateParameter(index: number, key: string, value: string) {
         const updatedParams = [...parameters];
         updatedParams[index] = { ...updatedParams[index], [key]: value };
         setParameters(updatedParams);
     };
 
     // function to submit data and create the table
-    const onDonePress = async () => {
+    async function onDonePress() {
         // check if there are any parameters
         if (parameters.length === 0) {
             console.log("DEBUG: No parameters defined");
@@ -73,7 +75,9 @@ export default function VarChooser() {
             // initialize the database table with the schema
             await DataBase.initializeDatabase(tableName, tableSchema);
             console.log("DEBUG: Database table created successfully!");
-            router.push(`/dataInput?tableName=${encodeURIComponent(tableName)}`); // navigate to data input page
+            router.push(
+                `/dataInput?tableName=${encodeURIComponent(tableName)}`
+            ); // navigate to data input page
             console.log("DEBUG: Pushed button to link to data input page.");
         } catch (error) {
             console.error("Error creating database table:", error);
@@ -82,7 +86,11 @@ export default function VarChooser() {
 
     return (
         <View
-            style={[styles.container, GlobalStyles.backgroundColor, GlobalStyles.container]}
+            style={[
+                styles.container,
+                GlobalStyles.backgroundColor,
+                GlobalStyles.container,
+            ]}
         >
             {/* MAIN CONTENT VIEW */}
             <View style={[styles.container, { width: "100%" }]}>
@@ -118,7 +126,6 @@ export default function VarChooser() {
 
                     )}
                 />
-                
             </View>
 
             {/* FOOTER */}

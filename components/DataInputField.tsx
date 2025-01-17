@@ -4,8 +4,8 @@ import { useState } from "react";
 import GlobalStyles from '@/styles/globalStyles';
 
 type Props = {
-  paramName: string;  // the name the user gave the parameter
-  paramType?: string;
+    paramName: string; // the name the user gave the parameter
+    paramType?: string;
 };
 
 export default function DataInputField({ paramName }: Props) {
