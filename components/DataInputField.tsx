@@ -4,34 +4,34 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import GlobalStyles from "@/styles/globalStyles";
 
 type Props = {
-    paramName: string; // the name the user gave the parameter
+    paramName: string;
     paramType?: string;
+    value: string;  // to control the value from parent
+    onValueChange: (value: string) => void;  // callback prop
 };
 
-export default function DataInputField({ paramName }: Props) {
-    const [value, setValue] = useState("");
+export default function DataInputField({ 
+    paramName, 
+    value, 
+    onValueChange 
+}: Props) {
     const [isEditing, setIsEditing] = useState(true);
-    //isEditing = true means the editing button is not shown
+    
     return (
         <View style={[GlobalStyles.border, styles.container]}>
-            {/* View for the Parameter name */}
             <View style={styles.header}>
                 <Text style={GlobalStyles.title}>{paramName}</Text>
             </View>
-
-            {/* View for the Input*/}
             <View style={styles.body}>
                 {isEditing ? (
-                    //Enter not pressed
                     <TextInput
                         style={styles.input}
                         placeholder="Value...?"
                         value={value}
-                        onChangeText={setValue}
+                        onChangeText={onValueChange}  // Use the callback here
                         onSubmitEditing={() => setIsEditing(false)}
                     />
                 ) : (
-                    //Enter pressed
                     <View style={styles.valueContainer}>
                         <Text style={GlobalStyles.text}>{value}</Text>
                         <Pressable
