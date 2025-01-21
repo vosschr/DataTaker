@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams } from "expo-router";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
+import { Text } from "react-native-paper";
 
 import GlobalStyles from "@/styles/globalStyles";
 
 import { DataBase, TableInfo } from "@/services/database";
 
-import DefaultButton from "@/components/DefaultButton";
 import DataInputField from "@/components/DataInputField";
+import { Button } from "react-native-paper";
 
 type Param = {
     name: string;
@@ -92,7 +93,7 @@ export default function DataInput() {
             ]}
         >
             {/* MAIN CONTENT VIEW */}
-            <View>
+            <View style={{ width: "100%" }}>
                 {/* TABLE NAME */}
                 <Text>Table name: {tableName}</Text>
                 {/* DATA INPUT FIELDS */}
@@ -112,18 +113,48 @@ export default function DataInput() {
             </View>
 
             {/* FOOTER */}
-            <View>
-                {/* DONE BUTTON */}
-                <DefaultButton text="Done" onPress={onDoneButton} />
+            <View style={styles.footer}>
                 {/* NEXT BUTTON */}
-                <DefaultButton text="Next" onPress={onNextButton} />
+                <Button style={styles.button}
+                        labelStyle={styles.buttonLabel}
+                        icon="page-next" 
+                        onPress={onNextButton} 
+                        mode="contained" 
+                >
+                    Next
+                </Button>
+
+                {/* DONE BUTTON */}
+                <Button style={styles.button}
+                        labelStyle={styles.buttonLabel}
+                        icon="check" 
+                        onPress={onDoneButton} 
+                        mode="contained" 
+                >
+                    Done
+                </Button>
             </View>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
+  container: {
+    flex: 1,
+  },
+  footer: {
+    flexDirection: "row",
+    position: "absolute",
+    bottom: 10,
+    justifyContent: "space-around", // Verteilt die Buttons gleichmäßig
+    width: "100%", // Stellt sicher, dass die Buttons innerhalb des Containers bleiben
+  },
+  button: {
+    margin: 10,
+    paddingVertical: 15, // Vertikaler Innenabstand für größere Höhe
+    paddingHorizontal: 30, // Horizontaler Innenabstand für breitere Buttons
+  },
+  buttonLabel: {
+    fontSize: 20,
+  },
 });

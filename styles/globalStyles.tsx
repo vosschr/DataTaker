@@ -6,7 +6,7 @@ const GlobalStyles = StyleSheet.create({
     alignItems: "center",
   },
   backgroundColor: {
-    backgroundColor: "lightgrey", // for testing while not finished //'#25292e' //Gunmetal
+    backgroundColor: "#lightgrey", // for testing while not finished //'#25292e' //Gunmetal
   },
   secondColor: {
     backgroundColor: "#49515B" //Charcoal
@@ -25,11 +25,10 @@ const GlobalStyles = StyleSheet.create({
     borderWidth: 4,
   },
   title: {
-    color: '#D3D0CB',
+    color: '#000000',
     fontSize: 20,
     fontWeight: 'bold',
   },
-
 
 });
 

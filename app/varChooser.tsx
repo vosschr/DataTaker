@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { TextInput, View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
+import { TextInput, Button } from 'react-native-paper';
 
 import GlobalStyles from "@/styles/globalStyles";
 
@@ -92,16 +93,24 @@ export default function VarChooser() {
             ]}
         >
             {/* MAIN CONTENT VIEW */}
-            <View style={[styles.container, { width: 300 }]}>
+            <View style={[styles.container, { width: "100%" }]}>
                 {/* TABLE NAME TEXTINPUT FIELD */}
                 <TextInput
-                    placeholder="Enter table name"
+                    style={{marginHorizontal: 10, marginTop: 10}}
+                    label="Name of the table"
+                    mode="outlined"
+                    placeholder="Enter new table name"
                     value={tableName}
                     onChangeText={(text) => setTableName(text)} // Update state on text change
                 />
 
                 {/* CREATE NEW FIELD BUTTON */}
-                <PlusButton onPress={addParameterField} />
+                <Button icon="plus-box" 
+                        onPress={addParameterField} 
+                        mode="contained" 
+                        style={{marginHorizontal: 10, marginVertical: 5}}>
+                    Add new parameter
+                </Button>
 
                 {/* Dynamic List of ParameterSelectionFields */}
                 <FlatList
@@ -111,21 +120,23 @@ export default function VarChooser() {
                         <ParameterSelectionField
                             paramName={item.name}
                             paramType={item.type}
-                            onNameChange={(value) =>
-                                updateParameter(index, "name", value)
-                            }
-                            onTypeChange={(value) =>
-                                updateParameter(index, "type", value)
-                            }
+                            onNameChange={(value) => updateParameter(index, "name", value)}
+                            onTypeChange={(value) => updateParameter(index, "type", value)}
                         />
+
                     )}
                 />
             </View>
 
             {/* FOOTER */}
-            <View>
+            <View style={{ width:"100%", marginBottom: 10 }}>
                 {/* DONE BUTTON */}
-                <DefaultButton text="Done" onPress={onDonePress} />
+                <Button style={styles.button}
+                        labelStyle={styles.buttonLabel}
+                        icon="check" 
+                        onPress={onDonePress} 
+                        mode="contained" 
+                >Done</Button>
             </View>
         </View>
     );
@@ -133,6 +144,14 @@ export default function VarChooser() {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
+      flex: 1,
     },
+    button: {
+        margin: 10,
+        paddingVertical: 15, // Vertikaler Innenabstand für größere Höhe
+        paddingHorizontal: 30, // Horizontaler Innenabstand für breitere Buttons
+      },
+    buttonLabel: {
+        fontSize: 20,
+      },
 });
