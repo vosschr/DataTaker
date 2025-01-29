@@ -76,4 +76,57 @@ Die technische Umsetzung basiert auf den folgenden Komponenten:
     \item \textbf{Export:} JSON- und CSV-Funktionen sind geplant, potenzielle Erweiterung auf ZIP-Archive mit integriertem Bildmaterial.
 \end{itemize}
 
+% (A2) Zusammenfassung
+\section{Zusammenfassung der erreichten Ergebnisse}
+
+Im bisherigen Projektverlauf wurden wichtige Grundfunktionen erfolgreich implementiert:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Tabellenerstellung:} Nutzende können individuelle Tabellen mit frei definierbaren Spalten (Variablen) anlegen.
+    \item \textbf{Datenerfassung:} Verschiedene Datentypen (Text, Zahl, Boolean, Bilder) stehen in der Erfassung zur Verfügung.
+    \item \textbf{Persistenz:} Alle erfassten Daten werden lokal in einer SQLite-Datenbank gespeichert.
+    \item \textbf{Exportfunktion:} Ein Export von Tabellen im CSV-Format wird unterstützt, sodass Daten einfach weiterverarbeitet werden können.
+    \item \textbf{Benutzeroberfläche:} Ein ansprechendes, reaktives UI unter Verwendung von React Native und TypeScript wurde bereitgestellt.
+\end{itemize}
+
+Darüber hinaus wurden im Laufe der Implementierung wichtige Erkenntnisse zur Architektur, Datenhaltung und UX gesammelt, welche ein stabiles Fundament für den weiteren Ausbau der App legen.
+
+\subsection{Mögliche zukünftige Arbeiten}
+Obwohl ein Großteil der Kernfunktionen vorhanden ist, bestehen weitere Ausbaumöglichkeiten:
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Neue Datentypen:} Unterstützung zusätzlicher Felder (z.\,B. Geo-Koordinaten, Audio, Video).
+    \item \textbf{Erweiterte Auswertungsfunktionen:} Diagramme oder Statistiken direkt innerhalb der App, um Daten komfortabel zu visualisieren.
+    \item \textbf{Datei-Import:} Neben dem Export wäre ein Import externer Daten (z.\,B. CSV, JSON) für einen durchgängigen Datenaustausch sinnvoll.
+    \item \textbf{Online-Synchronisierung:} Eine Schnittstelle zu Servern oder Cloud-Diensten, um Daten auf mehreren Endgeräten aktuell zu halten.
+    \item \textbf{Multi-User-Fähigkeit:} Rollen- und Berechtigungsverwaltung in größeren Arbeitsgruppen-Umgebungen.
+\end{itemize}
+
+% (A3) Erfahrungsbericht
+\section{Erfahrungsbericht}
+
+\subsection{Entscheidungen und deren Auswirkungen}
+Im Entwicklungsprozess wurden verschiedene Entscheidungen getroffen, die sich im Nachhinein als hilfreich oder eher schwierig erwiesen haben:
+
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Einsatz von React Native und TypeScript:} 
+    \begin{itemize}
+        \item \textit{Vorteil:} Klare Typisierung, gute Wiederverwendbarkeit und verhältnismäßig kurze Einarbeitungszeit.   
+        \item \textit{Nachteil:} Gruppe hat keine Vorkenntnisse in TypeScript oder React Native gehabt.
+    \end{itemize}
+    \item \textbf{Expo-SQLite für lokale Speicherung:}
+    \begin{itemize}
+        \item \textit{Vorteil:} Sehr schnell eingebunden, offline-fähig und genügend für die angestrebte Datenmenge.
+        \item \textit{Nachteil:} Weniger flexibel als moderne serverseitige Lösungen (aktuell nur lokal aber mit Datenbank auf Server möglich), falls zukünftig eine Online-Synchronisierung gewünscht wird.
+    \end{itemize}
+    \item \textbf{Fokus auf Benutzerfreundlichkeit:}
+    \begin{itemize}
+        \item \textit{Vorteil:} Schnelles Prototyping von UI/UX-Konzepten durch Paper-Komponenten, was zu einem intuitiven Layout führte.
+    \end{itemize}
+\end{itemize}
+
+\subsection{Tipps für zukünftige Entwickler}
+\begin{itemize}[leftmargin=1.5cm]
+    \item \textbf{Wiederverwendbare Komponenten erstellen:} Durch modularen Aufbau können künftige Funktionserweiterungen rasch eingebunden werden.
+    \item \textbf{Dokumentation nicht vernachlässigen}
+\end{itemize}
+
 \end{document}

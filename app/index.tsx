@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { Text, View, ScrollView, StyleSheet } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
-import { Picker } from "@react-native-picker/picker";
+import Table from "@/components/Table"
 
 import GlobalStyles from "@/styles/globalStyles";
 
-import PlusButton from "@/components/PlusButton";
+import { Button } from "react-native-paper";
 
 import { DataBase } from "@/services/database";
 import FileManager from "@/services/fileManager";
@@ -130,6 +130,7 @@ export default function Index() {
         }
     }
 
+
     return (
         <View
             style={[
@@ -138,35 +139,37 @@ export default function Index() {
                 GlobalStyles.container,
             ]}
         >
-            <ScrollView>
+            <ScrollView style={styles.scrollView}>
                 {/* Plus Button to start new Table setup (link to varChooser) */}
-                <PlusButton onPress={onPlusPress} />
+                <Button icon="plus" onPress={onPlusPress} mode="contained" style={styles.newTableButton} >
+                    New table
+                </Button>
                 {/* TABLES */}
                 {tables.map((table, index) => (
-                    <View key={index}>
-                        <Text>{table}</Text>
-                        <Picker
-                            selectedValue={null}
-                            onValueChange={(value) => {
-                                if (value) {
-                                    handlePickerAction(value, table);
-                                }
-                            }}
-                        >
-                            <Picker.Item label={table} value="" />
-                            <Picker.Item label="Take Data" value="take data" />
-                            <Picker.Item label="Delete Table" value="delete" />
-                            <Picker.Item label="Export .csv" value="export" />
-                        </Picker>
-                    </View>
+                    <Table
+                        key={index}
+                        tableName={table}
+                        onAction={handlePickerAction}
+                    />
                 ))}
             </ScrollView>
         </View>
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        width: "100%",
+    },
+    newTableButton: {
+        width: "100%",       // 80% Breite
+        alignSelf: "center",
+        marginTop: 5,      // etwas Abstand nach oben
+        marginBottom: 5,
+    },
+    scrollView: {
+        width: "80%",
     },
 });

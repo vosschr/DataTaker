@@ -5,8 +5,6 @@ import { TextInput, Button } from 'react-native-paper';
 
 import GlobalStyles from "@/styles/globalStyles";
 
-import DefaultButton from "@/components/DefaultButton";
-import PlusButton from "@/components/PlusButton";
 import ParameterSelectionField from "@/components/ParameterSelectionField";
 
 import { DataBase } from "@/services/database";

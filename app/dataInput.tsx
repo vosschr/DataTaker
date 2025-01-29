@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { useLocalSearchParams } from "expo-router";
-import { View, StyleSheet } from "react-native";
-import { Text } from "react-native-paper";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { View, StyleSheet, Alert } from "react-native";
+import { Text, Icon } from "react-native-paper";
 
 import GlobalStyles from "@/styles/globalStyles";
 
@@ -20,6 +20,7 @@ type Param = {
 export default function DataInput() {
     // the table name is passed when dataInput.tsx is pushed on the stack (by varChooser), we have to fetch it like this:
     const { tableName } = useLocalSearchParams();
+    const router = useRouter;
 
     // state to hold the fields
     const [parameters, setParameters] = useState<Param[]>([]);
@@ -60,101 +61,147 @@ export default function DataInput() {
      * @param newValue string - new value
      */
     function onDataInputUpdate(paramName: string, newValue: string) {
-        setParameters(prevValues => 
-            prevValues.map(param => 
-                param.name === paramName 
+        setParameters(prevValues =>
+            prevValues.map(param =>
+                param.name === paramName
                     ? { ...param, value: newValue }
                     : param
             )
         );
     }
 
-    function onNextButton() {
+    function hasMissingParams(): boolean {
+        // Prüfe, ob mindestens ein value leer ist
+        return parameters.some(param => !param.value.trim());
+    }
+
+    async function onNextButton() {
         //TODO
         // check for missing params -> warnings
         // add current params to db
         // ALTERNATIVELY: save current params in buffer, to add all of them together then done button is pressed
         // push new dataInput Window on Stack
-    };
 
-    function onDoneButton() {
-        //TODO
-        // check for missing params -> warnings
-        // add current params to db
-        // push index on stack
-    };
+        // Any fields empty?
+        if (hasMissingParams()) {
+            Alert.alert("Fehlende Angaben", "Please fill all parameters.");
+            return;
+        }
 
-    return (
-        <View
-            style={[
-                styles.container,
-                GlobalStyles.backgroundColor,
-                GlobalStyles.container,
-            ]}
-        >
-            {/* MAIN CONTENT VIEW */}
-            <View style={{ width: "100%" }}>
-                {/* TABLE NAME */}
-                <Text>Table name: {tableName}</Text>
-                {/* DATA INPUT FIELDS */}
-                {parameters.map((param) => (
-                    <View key={param.name}>
-                        <Text>
-                            {param.name} ({param.type})
-                        </Text>
-                        <DataInputField
-                            paramName={param.name}
-                            paramType={param.type}
-                            value={param.value}
-                            onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
-                        />
-                    </View>
-                ))}
-            </View>
+        // Write to database
+        try {
+            // Baue daraus ein Objekt { name: val1, age: val2, ... } für addRow
+            const record = parameters.reduce((obj, param) => {
+                obj[param.name] = param.value;
+                return obj;
+            }, {} as Record<string, string>);
 
-            {/* FOOTER */}
-            <View style={styles.footer}>
-                {/* NEXT BUTTON */}
-                <Button style={styles.button}
-                        labelStyle={styles.buttonLabel}
-                        icon="page-next" 
-                        onPress={onNextButton} 
-                        mode="contained" 
-                >
-                    Next
-                </Button>
+            await DataBase.addRow(tableName as string, record);
 
-                {/* DONE BUTTON */}
-                <Button style={styles.button}
-                        labelStyle={styles.buttonLabel}
-                        icon="check" 
-                        onPress={onDoneButton} 
-                        mode="contained" 
-                >
-                    Done
-                </Button>
-            </View>
+            // empty the fields
+            setParameters(parameters.map(param => ({ ...param, value: "" })));
+
+        } catch (error) {
+            console.error("Error while trying to add to DB:", error);
+            Alert.alert("Error", "Error occured while saving");
+        }
+    }
+
+function onDoneButton() {
+    //TODO
+    // check for missing params -> warnings
+    // add current params to db
+    // push index on stack
+}
+
+return (
+    <View
+        style={[
+            styles.container,
+            GlobalStyles.backgroundColor,
+        ]}
+    >
+        <View style={styles.headerContainer}>
+            {/* TABLE NAME */}
+            <Icon source="table" size={20} />
+            <Text variant="headlineMedium" style={styles.headerText}>
+                {tableName}
+            </Text>
         </View>
-    );
+        {/* MAIN CONTENT VIEW */}
+        <View style={{ width: "100%" }}>
+            {/* DATA INPUT FIELDS */}
+            {parameters.map((param) => (
+                <View key={param.name}>
+                    <Text>
+                        {param.name} ({param.type})
+                    </Text>
+                    <DataInputField
+                        paramName={param.name}
+                        paramType={param.type}
+                        value={param.value}
+                        onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
+                    />
+                </View>
+            ))}
+        </View>
+
+        {/* FOOTER */}
+        <View style={styles.footer}>
+            {/* NEXT BUTTON */}
+            <Button style={styles.button}
+                labelStyle={styles.buttonLabel}
+                icon="page-next"
+                onPress={onNextButton}
+                mode="contained"
+            >
+                Next
+            </Button>
+
+            {/* DONE BUTTON */}
+            <Button style={styles.button}
+                labelStyle={styles.buttonLabel}
+                icon="check"
+                onPress={onDoneButton}
+                mode="contained"
+            >
+                Done
+            </Button>
+        </View>
+    </View>
+);
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  footer: {
-    flexDirection: "row",
-    position: "absolute",
-    bottom: 10,
-    justifyContent: "space-around", // Verteilt die Buttons gleichmäßig
-    width: "100%", // Stellt sicher, dass die Buttons innerhalb des Containers bleiben
-  },
-  button: {
-    margin: 10,
-    paddingVertical: 15, // Vertikaler Innenabstand für größere Höhe
-    paddingHorizontal: 30, // Horizontaler Innenabstand für breitere Buttons
-  },
-  buttonLabel: {
-    fontSize: 20,
-  },
+    container: {
+        flex: 1,
+    },
+    footer: {
+        flexDirection: "row",
+        position: "absolute",
+        bottom: 10,
+        justifyContent: "space-around", // Verteilt die Buttons gleichmäßig
+        width: "100%", // Stellt sicher, dass die Buttons innerhalb des Containers bleiben
+    },
+    button: {
+        margin: 10,
+        paddingVertical: 15, // Vertikaler Innenabstand für größere Höhe
+        paddingHorizontal: 30, // Horizontaler Innenabstand für breitere Buttons
+    },
+    buttonLabel: {
+        fontSize: 20,
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginLeft: 5,
+
+    },
+    headerContainer: {
+        flexDirection: "row",
+        width: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginBottom: 10,
+    },
 });
