@@ -1,7 +1,7 @@
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from 'expo-image-picker';
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
@@ -11,6 +11,7 @@ export default function App() {
     const [isButtonShown, setIsButtonShown] = useState<boolean>(true);
     const [isCameraShown, setIsCameraShown] = useState<boolean>(false);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const cameraRef = useRef<any>(null); // Reference to the CameraView
 
     if (!permission) {
         return <View />;
@@ -52,6 +53,15 @@ export default function App() {
         }
     }
 
+    // Function to take a picture
+    async function takePicture() {
+        if (cameraRef.current) {
+            const photo = await cameraRef.current.takePictureAsync();
+            setSelectedImage(photo.uri);  // Update selected image state with captured photo URI
+            setIsCameraShown(false);      // Hide camera after taking the photo
+        }
+    }
+
     return (
         <View style={styles.container}>
             {isButtonShown && (
@@ -62,10 +72,17 @@ export default function App() {
             )}
             {selectedImage && <Image source={{ uri: selectedImage }} style={styles.image} />}
             {isCameraShown && (
-                <CameraView style={styles.camera} facing={facing}>
+                <CameraView
+                    style={styles.camera}
+                    facing={facing}
+                    ref={cameraRef} // Attach camera reference
+                >
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
                             <Text style={styles.text}>Flip Camera</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={takePicture}>
+                            <Text style={styles.text}>Take Photo</Text>
                         </TouchableOpacity>
                     </View>
                 </CameraView>
@@ -90,14 +107,17 @@ const styles = StyleSheet.create({
     },
     buttonContainer: {
         flex: 1,
-        flexDirection: "row",
+        flexDirection: "column", // Stack buttons vertically
+        justifyContent: "flex-end",
         backgroundColor: "transparent",
         margin: 64,
     },
     button: {
-        flex: 1,
-        alignSelf: "flex-end",
-        alignItems: "center",
+        alignSelf: "center",
+        padding: 20,
+        backgroundColor: "#000",
+        borderRadius: 10,
+        margin: 10,
     },
     text: {
         fontSize: 24,
