@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         ); // open db
 
         // convert object to strings used for query
-        const columns = Object.keys(record).join(", ");
+        const columns = Object.keys(record).map(key => `'${key}'`).join(", ");
         const values = Object.values(record);
         const placeholders = Object.keys(record)
             .map(() => "?")
