@@ -20,7 +20,7 @@ type Param = {
 export default function DataInput() {
     // the table name is passed when dataInput.tsx is pushed on the stack (by varChooser), we have to fetch it like this:
     const { tableName } = useLocalSearchParams();
-    const router = useRouter;
+    const router = useRouter();
 
     // state to hold the fields
     const [parameters, setParameters] = useState<Param[]>([]);
@@ -75,6 +75,11 @@ export default function DataInput() {
         return parameters.some(param => !param.value.trim());
     }
 
+    function hasAnyParams(): boolean {
+        // Prüfe, ob mindestens ein value da ist
+        return parameters.some(param => param.value.trim());
+    }
+
     async function onNextButton() {
         //TODO
         // check for missing params -> warnings
@@ -107,69 +112,72 @@ export default function DataInput() {
         }
     }
 
-function onDoneButton() {
-    //TODO
-    // check for missing params -> warnings
-    // add current params to db
-    // push index on stack
-}
+    function onDoneButton() {
+        // check for missing params -> warnings
+        if (hasAnyParams()) {
+            // add current params to db
+            onNextButton();
+        }
+        // back to index
+        router.replace("/");
+    }
 
-return (
-    <View
-        style={[
-            styles.container,
-            GlobalStyles.backgroundColor,
-        ]}
-    >
-        <View style={styles.headerContainer}>
-            {/* TABLE NAME */}
-            <Icon source="table" size={20} />
-            <Text variant="headlineMedium" style={styles.headerText}>
-                {tableName}
-            </Text>
-        </View>
-        {/* MAIN CONTENT VIEW */}
-        <View style={{ width: "100%" }}>
-            {/* DATA INPUT FIELDS */}
-            {parameters.map((param) => (
-                <View key={param.name}>
-                    <Text>
-                        {param.name} ({param.type})
-                    </Text>
-                    <DataInputField
-                        paramName={param.name}
-                        paramType={param.type}
-                        value={param.value}
-                        onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
-                    />
-                </View>
-            ))}
-        </View>
+    return (
+        <View
+            style={[
+                styles.container,
+                GlobalStyles.backgroundColor,
+            ]}
+        >
+            <View style={styles.headerContainer}>
+                {/* TABLE NAME */}
+                <Icon source="table" size={20} />
+                <Text variant="headlineMedium" style={styles.headerText}>
+                    {tableName}
+                </Text>
+            </View>
+            {/* MAIN CONTENT VIEW */}
+            <View style={{ width: "100%" }}>
+                {/* DATA INPUT FIELDS */}
+                {parameters.map((param) => (
+                    <View key={param.name}>
+                        <Text>
+                            {param.name} ({param.type})
+                        </Text>
+                        <DataInputField
+                            paramName={param.name}
+                            paramType={param.type}
+                            value={param.value}
+                            onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
+                        />
+                    </View>
+                ))}
+            </View>
 
-        {/* FOOTER */}
-        <View style={styles.footer}>
-            {/* NEXT BUTTON */}
-            <Button style={styles.button}
-                labelStyle={styles.buttonLabel}
-                icon="page-next"
-                onPress={onNextButton}
-                mode="contained"
-            >
-                Next
-            </Button>
+            {/* FOOTER */}
+            <View style={styles.footer}>
+                {/* NEXT BUTTON */}
+                <Button style={styles.button}
+                    labelStyle={styles.buttonLabel}
+                    icon="page-next"
+                    onPress={onNextButton}
+                    mode="contained"
+                >
+                    Next
+                </Button>
 
-            {/* DONE BUTTON */}
-            <Button style={styles.button}
-                labelStyle={styles.buttonLabel}
-                icon="check"
-                onPress={onDoneButton}
-                mode="contained"
-            >
-                Done
-            </Button>
+                {/* DONE BUTTON */}
+                <Button style={styles.button}
+                    labelStyle={styles.buttonLabel}
+                    icon="check"
+                    onPress={onDoneButton}
+                    mode="contained"
+                >
+                    Done
+                </Button>
+            </View>
         </View>
-    </View>
-);
+    );
 }
 
 const styles = StyleSheet.create({
