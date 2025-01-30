@@ -1,3 +1,4 @@
+import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 
 class FileManager {
