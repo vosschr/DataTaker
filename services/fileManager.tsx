@@ -41,6 +41,13 @@ class FileManager {
       // Write the CSV content to the file
       await FileSystem.writeAsStringAsync(filePath, csvContent);
 
+      await Sharing.shareAsync(
+        `${FileSystem.documentDirectory}DataTaker/data/output.csv`, 
+        {dialogTitle: 'share or copy your DB via'}
+     ).catch(error =>{
+        console.log(error);
+     })
+
       return filePath;
     } catch (error) {
       console.error('Error generating CSV:', error);
