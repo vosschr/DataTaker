@@ -12,6 +12,10 @@ This is our app for the Fortgeschrittenen Praktikum.
 
 ## Setting Up the Development Environment
 
+0. **Install Node.js**
+   - Download and install Node.js from [nodejs.org](https://nodejs.org).
+   - Ensure `npm` (Node Package Manager) is installed along with Node.js.
+
 1. **Clone the Repository**
    
    Use Git to clone the project repository from GitHub:
@@ -23,34 +27,19 @@ This is our app for the Fortgeschrittenen Praktikum.
    cd DataTaker
    ```
 
-3. **Install Node.js**
-   - Download and install Node.js from [nodejs.org](https://nodejs.org).
-   - Ensure `npm` (Node Package Manager) is installed along with Node.js.
-
-4. **Install Expo CLI**
-   ```bash
-   npm install -g expo-cli
-   ```
-
-5. **Install Project Dependencies**
+2. **Install Project Dependencies**
    This step assumes you have already navigated to the cloned project directory. Run the following command to install all dependencies:
    ```bash
    npm install
    ```
-
-6. **Additional Expo Packages**
-   Install the following Expo packages if needed:
-   ```bash
-   npm install expo-router expo-sqlite expo-camera expo-file-system @react-native-picker/picker
-   ```
    > Note: `react` and `react-native` are installed automatically.
    > If working in VSCode you might need to restart the TypeScript server by pressing `Ctrl + Shift + P` while having a `.tsx` file focused in the editor and selecting `TypeScript: Restart TS Server`.
 
-7. **Set Up Android Studio (Optional)**
+3a. **Set Up Android Studio (Optional)**
    - Download and install [Android Studio](https://developer.android.com/studio) to use a virtual Android phone.
    - Configure an Android Virtual Device (AVD).
 
-8. **Expo Go App** (Optional)
+3b. **Expo Go App (Optional)**
    - Install the Expo Go app on your physical phone from the [Google Play Store](https://play.google.com/store) or [Apple App Store](https://www.apple.com/app-store/).
 
 ## Running the Project
