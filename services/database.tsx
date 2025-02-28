@@ -31,16 +31,23 @@ export const DataBase = {
     initializeDatabase: async (tableName: string, tableSchema: object) => {
         console.log("DEBUG: initializing Database.");
         console.log("DEBUG: talbeName: ", tableName);
-        console.log("DEBUG: tableSchema: ", tableSchema);
 
         // create empty db with file
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
         );
 
+        // Add an auto-incrementing ID column to the table schema
+        //TODO: add setting for this and don't execute if unwanted
+        const schemaWithId = {
+            id: 'INTEGER PRIMARY KEY AUTOINCREMENT', // Auto-incrementing ID column
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: schemaWithID: ", schemaWithId);
+
         // put together tableSchema string for the SQL query
         // the quotes around ${column} are necessary in case sql key-words are used as column names
-        const columns = Object.entries(tableSchema)
+        const columns = Object.entries(schemaWithId)
             .map(([column, type]) => `"${column}" ${type}`)
             .join(", ");
         console.log("DEBUG: columns:", columns);
@@ -82,7 +89,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
             // Get all rows from the table
             const allRows: object[] = await db.getAllAsync(
-                `SELECT * FROM [${tableName}];`
+                `SELECT id, * FROM [${tableName}];`
             );
 
             return allRows;

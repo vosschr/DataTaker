@@ -31,11 +31,13 @@ export default function DataInput() {
             const columns: TableInfo[] = await DataBase.getColumns(tableName);
 
             // Create a new array of parameters from the columns
-            const newParameters: Param[] = columns.map((col) => ({
-                name: col.name,
-                type: col.type,
-                value: "", // default value
-            }));
+            const newParameters: Param[] = columns
+                .filter((col) => col.name !== "id") // Skip the 'id' column
+                .map((col) => ({
+                    name: col.name,
+                    type: col.type,
+                    value: "", // default value
+                }));
 
             // Update the state once with the new array
             setParameters(newParameters);
