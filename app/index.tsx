@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Text, View, ScrollView, StyleSheet } from "react-native";
+import { Text, View, ScrollView, StyleSheet, Alert } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import Table from "@/components/Table"
@@ -110,10 +110,24 @@ export default function Index() {
                 ); // navigate to data input page
                 break;
             case "delete":
-                console.log("DEBUG: delete " + tableName + ".");
-                setTables([]);
-                DataBase.deleteDatabase(tableName);
-                fetchTables();
+                Alert.alert(
+                    "Delete Table",
+                    `Do you really want to delete "${tableName}" ?`,
+                    [
+                        { text: "Cancel", style: "cancel" },
+                        { 
+                            text: "Delete", 
+                            style: "destructive",
+                            onPress: async () => {
+                                console.log("DEBUG: delete " + tableName + ".");
+                                setTables([]);
+                                await DataBase.deleteDatabase(tableName);
+                                fetchTables();
+                            }
+                        }
+                    ],
+                    { cancelable: true }
+                );
                 break;
             case "export":
                 console.log("DEBUG: pressed \"Export .scv\"");

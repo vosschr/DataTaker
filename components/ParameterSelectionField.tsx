@@ -32,6 +32,11 @@ export default function ParameterSelectionField({
                         label: 'Integer',
                         icon: "numeric",
                     },
+                    {
+                        value: "BOOLEAN",
+                        label: "Boolean",
+                        icon: "toggle-switch",
+                    },
                 ]}
             />
 

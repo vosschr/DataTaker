@@ -24,6 +24,7 @@ export default function Table({ tableName, onAction }: TableProps) {
   return (
     <Card style={styles.card} onPress={pushRouter} >
       <Card.Title
+        titleStyle={{fontWeight: "bold"}}
         title={tableName}
         right={(props) => (
           <Menu

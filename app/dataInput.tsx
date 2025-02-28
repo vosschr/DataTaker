@@ -34,7 +34,7 @@ export default function DataInput() {
             const newParameters: Param[] = columns.map((col) => ({
                 name: col.name,
                 type: col.type,
-                value: "", // default value
+                value: col.type === "BOOLEAN" ? "false" : "", // default value
             }));
 
             // Update the state once with the new array
@@ -89,7 +89,7 @@ export default function DataInput() {
 
         // Any fields empty?
         if (hasMissingParams()) {
-            Alert.alert("Fehlende Angaben", "Please fill all parameters.");
+            Alert.alert("Somethings missing", "Please fill all parameters.");
             return;
         }
 
@@ -142,9 +142,6 @@ export default function DataInput() {
                 {/* DATA INPUT FIELDS */}
                 {parameters.map((param) => (
                     <View key={param.name}>
-                        <Text>
-                            {param.name} ({param.type})
-                        </Text>
                         <DataInputField
                             paramName={param.name}
                             paramType={param.type}
