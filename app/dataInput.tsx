@@ -31,8 +31,10 @@ export default function DataInput() {
             const columns: TableInfo[] = await DataBase.getColumns(tableName);
 
             // Create a new array of parameters from the columns
+            //TODO only skip if settings are according
             const newParameters: Param[] = columns
                 .filter((col) => col.name !== "id") // Skip the 'id' column
+                .filter((col) => col.name !== "date") // Skip the 'date' column
                 .map((col) => ({
                     name: col.name,
                     type: col.type,

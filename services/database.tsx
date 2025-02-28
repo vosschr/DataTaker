@@ -37,17 +37,25 @@ export const DataBase = {
             `${TABLE_DIR}${tableName}.db`
         );
 
-        // Add an auto-incrementing ID column to the table schema
+        // add an auto-incrementing ID column to the table schema
         //TODO: add setting for this and don't execute if unwanted
-        const schemaWithId = {
-            id: 'INTEGER PRIMARY KEY AUTOINCREMENT', // Auto-incrementing ID column
+        tableSchema = {
+            id: 'INTEGER PRIMARY KEY AUTOINCREMENT',
             ...tableSchema // Spread the rest of the schema
         };
-        console.log("DEBUG: schemaWithID: ", schemaWithId);
+        console.log("DEBUG: tableSchema: ", tableSchema);
+
+        // add date to table schema
+        //TODO: setting
+        tableSchema = {
+            date: 'TEXT',
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: tableSchema: ", tableSchema);
 
         // put together tableSchema string for the SQL query
         // the quotes around ${column} are necessary in case sql key-words are used as column names
-        const columns = Object.entries(schemaWithId)
+        const columns = Object.entries(tableSchema)
             .map(([column, type]) => `"${column}" ${type}`)
             .join(", ");
         console.log("DEBUG: columns:", columns);
@@ -123,6 +131,14 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
         ); // open db
+
+        // Get the current date
+        //TODO: only do if settings are according
+        const currentDate = new Date().toISOString(); // ISO format date
+        record = {
+            ...record,
+            date: currentDate
+        }
 
         // convert object to strings used for query
         const columns = Object.keys(record).map(key => `'${key}'`).join(", ");
