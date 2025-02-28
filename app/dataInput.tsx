@@ -119,6 +119,7 @@ export default function DataInput() {
             onNextButton();
         }
         // back to index
+        console.log("Current route:" , router);
         router.replace("/");
     }
 

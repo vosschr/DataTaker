@@ -24,7 +24,7 @@ export default function RootLayout() {
                         headerTitleAlign: "center",
                         headerRight: () => (
                             <IconButton
-                                icon="cog" // Aus dem react-native-paper Icon-Satz
+                                icon="cog"
                                 onPress={() => router.push("/settings")}
                             />
                         ),
