@@ -4,6 +4,9 @@
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 
+import { getCurrentLocation } from "./geotag";
+
+
 export type TableInfo = {
     cid: number;
     name: string;
@@ -49,6 +52,15 @@ export const DataBase = {
         //TODO: setting
         tableSchema = {
             date: 'TEXT',
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: tableSchema: ", tableSchema);
+
+        // add geo tag to table schema
+        //TODO: setting
+        tableSchema = {
+            latitude: 'REAL',
+            longitude: 'REAL',
             ...tableSchema // Spread the rest of the schema
         };
         console.log("DEBUG: tableSchema: ", tableSchema);
@@ -138,6 +150,15 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         record = {
             ...record,
             date: currentDate
+        }
+
+        // Get the current location
+        //TODO: only do if settings are according
+        const geotag: { latitude: number, longitude: number } | null = await getCurrentLocation();
+        record = {
+            ...record,
+            longitude: geotag?.latitude,
+            latitude: geotag?.longitude
         }
 
         // convert object to strings used for query

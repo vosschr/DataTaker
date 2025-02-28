@@ -35,6 +35,8 @@ export default function DataInput() {
             const newParameters: Param[] = columns
                 .filter((col) => col.name !== "id") // Skip the 'id' column
                 .filter((col) => col.name !== "date") // Skip the 'date' column
+                .filter((col) => col.name !== "longitude") // Skip geo tag
+                .filter((col) => col.name !== "latitude") // Skip geo tag
                 .map((col) => ({
                     name: col.name,
                     type: col.type,
