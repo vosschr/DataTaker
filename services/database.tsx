@@ -4,6 +4,9 @@
 import * as SQLite from "expo-sqlite";
 import * as FileSystem from "expo-file-system";
 
+import { getCurrentLocation } from "./geotag";
+
+
 export type TableInfo = {
     cid: number;
     name: string;
@@ -31,12 +34,36 @@ export const DataBase = {
     initializeDatabase: async (tableName: string, tableSchema: object) => {
         console.log("DEBUG: initializing Database.");
         console.log("DEBUG: talbeName: ", tableName);
-        console.log("DEBUG: tableSchema: ", tableSchema);
 
         // create empty db with file
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
         );
+
+        // add an auto-incrementing ID column to the table schema
+        //TODO: add setting for this and don't execute if unwanted
+        tableSchema = {
+            id: 'INTEGER PRIMARY KEY AUTOINCREMENT',
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: tableSchema: ", tableSchema);
+
+        // add date to table schema
+        //TODO: setting
+        tableSchema = {
+            date: 'TEXT',
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: tableSchema: ", tableSchema);
+
+        // add geo tag to table schema
+        //TODO: setting
+        tableSchema = {
+            latitude: 'REAL',
+            longitude: 'REAL',
+            ...tableSchema // Spread the rest of the schema
+        };
+        console.log("DEBUG: tableSchema: ", tableSchema);
 
         // put together tableSchema string for the SQL query
         // the quotes around ${column} are necessary in case sql key-words are used as column names
@@ -82,7 +109,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
             // Get all rows from the table
             const allRows: object[] = await db.getAllAsync(
-                `SELECT * FROM [${tableName}];`
+                `SELECT id, * FROM [${tableName}];`
             );
 
             return allRows;
@@ -116,6 +143,23 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
         ); // open db
+
+        // Get the current date
+        //TODO: only do if settings are according
+        const currentDate = new Date().toISOString(); // ISO format date
+        record = {
+            ...record,
+            date: currentDate
+        }
+
+        // Get the current location
+        //TODO: only do if settings are according
+        const geotag: { latitude: number, longitude: number } | null = await getCurrentLocation();
+        record = {
+            ...record,
+            longitude: geotag?.latitude,
+            latitude: geotag?.longitude
+        }
 
         // convert object to strings used for query
         const columns = Object.keys(record).map(key => `'${key}'`).join(", ");

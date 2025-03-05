@@ -31,11 +31,18 @@ export default function DataInput() {
             const columns: TableInfo[] = await DataBase.getColumns(tableName);
 
             // Create a new array of parameters from the columns
-            const newParameters: Param[] = columns.map((col) => ({
-                name: col.name,
-                type: col.type,
-                value: col.type === "BOOLEAN" ? "false" : "", // default value
-            }));
+            const newParameters: Param[] = columns
+                .filter((col) => col.name !== "id")        // skip the "id" column
+                .filter((col) => col.name !== "date")      // skip the "date" column
+                .filter((col) => col.name !== "latitude")  // skip gps tag
+                .filter((col) => col.name !== "longitude") // skip gps tag
+                .map((col) => ({
+                    name: col.name,
+                    type: col.type,
+                    // Wenn der Spaltentyp BOOLEAN ist, dann Default "false", sonst ""
+                    value: col.type === "BOOLEAN" ? "false" : "",
+                }));
+
 
             // Update the state once with the new array
             setParameters(newParameters);
@@ -119,7 +126,7 @@ export default function DataInput() {
             onNextButton();
         }
         // back to index
-        console.log("Current route:" , router);
+        console.log("Current route:", router);
         router.replace("/");
     }
 
