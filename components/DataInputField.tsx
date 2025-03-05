@@ -53,7 +53,6 @@ export default function DataInputField({
           placeholder="Value...?"
           value={value}
           onChangeText={onValueChange}
-          onSubmitEditing={() => setIsEditing(false)}
         />
       )}
     </View>

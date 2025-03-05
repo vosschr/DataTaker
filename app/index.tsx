@@ -144,6 +144,19 @@ export default function Index() {
         }
     }
 
+    async function getTableMetadata(tableName: string) {
+        try {
+          const columns = await DataBase.getColumns(tableName);
+          const rows = await DataBase.queryAll(tableName);
+          return {
+            columnCount: columns.length,
+            rowCount: rows.length,
+          };
+        } catch (error) {
+          console.log("Fehler beim Abrufen der Metadaten:", error);
+          return null;
+        }
+      }
 
     return (
         <View

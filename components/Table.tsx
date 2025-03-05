@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Card, Menu, IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
@@ -22,21 +22,16 @@ export default function Table({ tableName, onAction }: TableProps) {
   }
 
   return (
-    <Card style={styles.card} onPress={pushRouter} >
+    <Card style={styles.card} onPress={pushRouter}>
       <Card.Title
-        titleStyle={{fontWeight: "bold"}}
+        titleStyle={{ fontWeight: "bold" }}
         title={tableName}
         right={(props) => (
           <Menu
             visible={menuVisible}
             onDismiss={closeMenu}
-            // Das IconButton ist der Anker für das Menü
             anchor={
-              <IconButton
-                {...props}
-                icon="dots-vertical"
-                onPress={openMenu}
-              />
+              <IconButton {...props} icon="dots-vertical" onPress={openMenu} />
             }
           >
             <Menu.Item
@@ -75,6 +70,6 @@ const styles = StyleSheet.create({
     width: "100%",
     alignSelf: "center",
     elevation: 2, // kleiner Schatten
-    marginBottom: 5, //unterer Abstand zu jedem anderen table
+    marginBottom: 5, // unterer Abstand zu jedem anderen Table
   },
 });
