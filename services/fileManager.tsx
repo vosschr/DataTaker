@@ -56,30 +56,27 @@ class FileManager {
   }
 
   /**
-   * Kopiert ein Bild aus dem temporären Cache in das App-Verzeichnis
-   * und gibt den neuen Pfad zurück.
-   * @param localUri - Der Pfad aus dem ImagePicker (file:///...)
-   * @returns Neuer Pfad im App-Verzeichnis
+   * Copys a picture from cache to app-directory and returns new path
+   * @param localUri - Path from ImagePicker (file:///...)
+   * @returns New Path in App-Directory
    */
   static async saveImageToAppFolder(localUri: string): Promise<string> {
     try {
-      // Unser Zielordner (kann beliebig angepasst werden)
       const imagesDir = `${FileSystem.documentDirectory}DataTaker/images/`;
-      // Ordner anlegen (falls nicht vorhanden)
+      // Generate folder (if needed)
       await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
 
-      // Eindeutigen Dateinamen generieren (z.B. mit Zeitstempel)
+      // Generate name
       const timestamp = Date.now();
       const fileName = `photo_${timestamp}.jpg`; 
       const newPath = imagesDir + fileName;
 
-      // Kopieren
+      // Copy
       await FileSystem.copyAsync({
         from: localUri,
         to: newPath,
       });
 
-      // Diesen neuen Pfad geben wir zurück
       return newPath;
     } catch (error) {
       console.error("Error saving image:", error);
