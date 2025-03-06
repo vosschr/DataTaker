@@ -36,6 +36,10 @@ export default function ParameterSelectionField({
             label: "Boolean",
             icon: "toggle-switch",
           },
+          { value: "IMAGE", 
+            label: "Picture", 
+            icon: "image" 
+          } 
         ]}
       />
 

@@ -1,11 +1,13 @@
-import React, { useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { Text, TextInput, Switch, Icon } from "react-native-paper";
+import React from "react";
+import { View, StyleSheet, Image } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { Text, TextInput, Switch, Icon, Button } from "react-native-paper";
+import FileManager from "@/services/fileManager";
 
 type Props = {
   paramName: string;
   paramType?: string;
-  value: string; 
+  value: string;
   onValueChange: (value: string) => void; // Callback nach oben
 };
 
@@ -15,7 +17,6 @@ export default function DataInputField({
   value,
   onValueChange,
 }: Props) {
-
   const iconName =
     paramType === "TEXT"
       ? "format-text"
@@ -23,6 +24,8 @@ export default function DataInputField({
       ? "numeric"
       : paramType === "BOOLEAN"
       ? "toggle-switch"
+      : paramType === "IMAGE"
+      ? "image"
       : "help-circle"; // Fallback, falls kein passender Typ
 
   return (
@@ -35,8 +38,8 @@ export default function DataInputField({
         </Text>
       </View>
 
-      {/* Eingabebereich darunter */}
       {paramType === "BOOLEAN" ? (
+        // BOOLEAN-UI
         <View style={styles.booleanContainer}>
           <Text style={styles.booleanLabel}>False</Text>
           <Switch
@@ -47,7 +50,55 @@ export default function DataInputField({
           />
           <Text style={styles.booleanLabel}>True</Text>
         </View>
+      ) : paramType === "IMAGE" ? (
+        // IMAGE-UI: Zwei Buttons nebeneinander
+        <View>
+          <View style={styles.imageButtonContainer}>
+            <Button
+              icon="camera"
+              mode="contained"
+              onPress={async () => {
+                const result = await ImagePicker.launchCameraAsync({
+                  mediaTypes: ["images"],
+                  allowsEditing: true,
+                  quality: 1,
+                });
+                if (!result.canceled) {
+                  const localUri = result.assets[0].uri;
+                  const newUri = await FileManager.saveImageToAppFolder(localUri);
+                  onValueChange(newUri);
+                  console.log("DEBUG: Image Uri:", newUri);
+                }
+              }}
+            >
+              Take Picture
+            </Button>
+            <Button
+              icon="image"
+              mode="contained"
+              onPress={async () => {
+                const result = await ImagePicker.launchImageLibraryAsync({
+                  mediaTypes: ["images"],
+                  allowsEditing: true,
+                  quality: 1,
+                });
+                if (!result.canceled) {
+                  const localUri = result.assets[0].uri;
+                  const newUri = await FileManager.saveImageToAppFolder(localUri);
+                  onValueChange(newUri);
+                  console.log("DEBUG: Image Uri:", newUri);
+                }
+              }}
+            >
+              Choose Image
+            </Button>
+          </View>
+          {value ? (
+            <Image source={{ uri: value }} style={styles.previewImage} />
+          ) : null}
+        </View>
       ) : (
+        // Standard: TEXT oder INTEGER
         <TextInput
           style={styles.input}
           placeholder="Value...?"
@@ -61,19 +112,12 @@ export default function DataInputField({
 
 const styles = StyleSheet.create({
   container: {
-    // Hintergrund + abgerundete Ecken
     backgroundColor: "#fff",
     borderRadius: 8,
-
-    // Innenabstände
     paddingVertical: 16,
     paddingHorizontal: 12,
-
-    // Abstände zum nächsten Feld
     marginVertical: 8,
     marginHorizontal: 16,
-
-    // Leichter Schatten / Elevation für "Karten"-Look
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
@@ -81,14 +125,10 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   titleRow: {
-    // Icon + Titel in einer Zeile
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center", // Zentriert beides horizontal
+    justifyContent: "center",
     marginBottom: 8,
-  },
-  icon: {
-    marginRight: 6,
   },
   title: {
     fontWeight: "bold",
@@ -99,11 +139,21 @@ const styles = StyleSheet.create({
   },
   booleanContainer: {
     flexDirection: "row",
-    justifyContent: "center", // True, Switch, False nebeneinander zentrieren
+    justifyContent: "center",
     alignItems: "center",
   },
   booleanLabel: {
     marginHorizontal: 10,
     fontWeight: "bold",
+  },
+  imageButtonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    marginBottom: 10,
+  },
+  previewImage: {
+    width: 100,
+    height: 100,
+    alignSelf: "center",
   },
 });
