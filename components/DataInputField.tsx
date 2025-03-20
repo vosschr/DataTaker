@@ -1,7 +1,7 @@
 import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Text, TextInput, Switch, Icon, Button } from "react-native-paper";
+import { Text, TextInput, Switch, Icon, Button, SegmentedButtons } from "react-native-paper";
 import FileManager from "@/services/fileManager";
 
 type Props = {
@@ -17,6 +17,24 @@ export default function DataInputField({
   value,
   onValueChange,
 }: Props) {
+  function extractEnumElements(text: string) {
+    const lastOpenParenIndex = text.lastIndexOf("(");
+    const lastCloseParenIndex = text.lastIndexOf(")");
+
+    if (
+      lastOpenParenIndex !== -1 &&
+      lastCloseParenIndex !== -1 &&
+      lastOpenParenIndex < lastCloseParenIndex
+    ) {
+      const enumContent = text.slice(lastOpenParenIndex + 1, lastCloseParenIndex);
+      return enumContent.split(",").map((element) => element.trim());
+    }
+    return [];
+  };
+  
+  // Enum-Elemente aus paramName extrahieren
+  const enumElements = extractEnumElements(paramName);
+
   const iconName =
     paramType === "TEXT"
       ? "format-text"
@@ -26,6 +44,8 @@ export default function DataInputField({
       ? "toggle-switch"
       : paramType === "IMAGE"
       ? "image"
+      : paramType === "ENUM"
+      ? "alpha-e-circle"
       : "help-circle"; // Fallback, falls kein passender Typ
 
   return (
@@ -49,6 +69,20 @@ export default function DataInputField({
             }
           />
           <Text style={styles.booleanLabel}>True</Text>
+        </View>
+      ) : paramType === "ENUM" ? (
+        // ENUM-UI
+        <View>
+          <SegmentedButtons
+            style={styles.segmentedButtons}
+            density="medium"
+            value={paramType}
+            onValueChange={onValueChange}
+            buttons={enumElements.map((element) => ({
+              value: element,
+              label: element,
+            }))}
+          />
         </View>
       ) : paramType === "IMAGE" ? (
         // IMAGE-UI: Zwei Buttons nebeneinander
@@ -155,5 +189,8 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     alignSelf: "center",
+  },
+  segmentedButtons: {
+    marginBottom: 3,
   },
 });
