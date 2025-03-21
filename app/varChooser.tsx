@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { TextInput, Button } from "react-native-paper";
+import { TextInput, Button, Switch } from "react-native-paper";
 
 import GlobalStyles from "@/styles/globalStyles";
 import ParameterSelectionField from "@/components/ParameterSelectionField";
-import { DataBase } from "@/services/database";
+import { DataBase, TableSettings } from "@/services/database";
 
 type Param = {
   name: string;
@@ -24,6 +24,12 @@ export default function VarChooser() {
   const [tableName, setTableName] = useState<string>(
     "newTable_" + currentDateWithTime
   );
+
+  const [tableSettings, setTableSettings] = useState<TableSettings>({
+    auto_ids: false,
+    date: false,
+    geoTag: false,
+  })
 
   // state to hold the dynamically added fields
   const [parameters, setParameters] = useState<Param[]>([]);
@@ -65,7 +71,7 @@ export default function VarChooser() {
 
     try {
       // initialize the database table with the schema
-      await DataBase.initializeDatabase(tableName, tableSchema);
+      await DataBase.initializeDatabase(tableName, tableSchema, tableSettings);
       console.log("DEBUG: Database table created successfully!");
       router.push(
         `/dataInput?tableName=${encodeURIComponent(tableName)}`
@@ -95,6 +101,42 @@ export default function VarChooser() {
           value={tableName}
           onChangeText={(text) => setTableName(text)}
         />
+
+        <View>
+          <View>
+            <Switch
+              value={tableSettings.auto_ids}
+              onValueChange={(newVal) => 
+                setTableSettings((prevSettings) => ({
+                  ...prevSettings,  // Keep all previous settings
+                  auto_ids: newVal, // Update only auto_ids
+                }))
+              }
+            />
+          </View>
+          <View>
+            <Switch
+              value={tableSettings.date}
+              onValueChange={(newVal) => 
+                setTableSettings((prevSettings) => ({
+                  ...prevSettings,  // Keep all previous settings
+                  date: newVal, // Update only date
+                }))
+              }
+            />
+          </View>
+          <View>
+            <Switch
+              value={tableSettings.geoTag}
+              onValueChange={(newVal) => 
+                setTableSettings((prevSettings) => ({
+                  ...prevSettings,  // Keep all previous settings
+                  geoTag: newVal, // Update only geoTag
+                }))
+              }
+            />
+          </View>
+        </View>
 
         {/* Dynamic List of ParameterSelectionFields */}
         <FlatList
