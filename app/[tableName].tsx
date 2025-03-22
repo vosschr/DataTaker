@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import { ActivityIndicator, DataTable, Text } from "react-native-paper";
+import { View, StyleSheet, Modal, TouchableOpacity, Image as RNImage } from "react-native";
+import { ActivityIndicator, DataTable, Text, Button } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 import { DataBase } from "@/services/database";
 
@@ -9,6 +9,17 @@ export default function TableDataScreen() {
   const [tableData, setTableData] = useState<any[]>([]);
   const [columns, setColumns] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  // Helper-Funktion: Gibt nur den Dateinamen zurück
+  const extractFileName = (path: string): string => {
+    return path.substring(path.lastIndexOf("/") + 1);
+  };
+
+  // Helper-Funktion: Prüft, ob ein Pfad auf ein Bild verweist
+  const isImagePath = (path: string): boolean => {
+    return /\.(jpg|jpeg|png|gif)$/i.test(path);
+  };
 
   useEffect(() => {
     const loadData = async () => {
@@ -16,7 +27,6 @@ export default function TableDataScreen() {
         if (typeof tableName === "string") {
           const data = await DataBase.queryAll(tableName);
           setTableData(data);
-          
           if (data.length > 0) {
             setColumns(Object.keys(data[0]));
           }
@@ -53,11 +63,24 @@ export default function TableDataScreen() {
 
           {tableData.map((row, index) => (
             <DataTable.Row key={index}>
-              {columns.map((column) => (
-                <DataTable.Cell key={`${index}-${column}`}>
-                  {String(row[column])}
-                </DataTable.Cell>
-              ))}
+              {columns.map((column) => {
+                const cellValue = String(row[column]);
+                let displayValue = cellValue;
+                if (isImagePath(cellValue)) {
+                  displayValue = extractFileName(cellValue);
+                }
+                return (
+                  <DataTable.Cell key={`${index}-${column}`}>
+                    {isImagePath(cellValue) ? (
+                      <TouchableOpacity onPress={() => setSelectedImage(cellValue)}>
+                        <Text style={styles.imageText}>{displayValue}</Text>
+                      </TouchableOpacity>
+                    ) : (
+                      <Text>{displayValue}</Text>
+                    )}
+                  </DataTable.Cell>
+                );
+              })}
             </DataTable.Row>
           ))}
 
@@ -68,6 +91,19 @@ export default function TableDataScreen() {
           )}
         </DataTable>
       )}
+
+      <Modal visible={!!selectedImage} transparent={true} animationType="fade">
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContainer}>
+            {selectedImage && (
+              <RNImage source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
+            )}
+            <Button mode="contained" onPress={() => setSelectedImage(null)}>
+              Schließen
+            </Button>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -80,5 +116,29 @@ const styles = StyleSheet.create({
   title: {
     marginBottom: 20,
     textAlign: "center",
+  },
+  imageText: {
+    color: "blue",
+    textDecorationLine: "underline",
+  },
+  modalBackground: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.8)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    width: "90%",
+    height: "80%",
+    backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  fullImage: {
+    width: "100%",
+    height: "80%",
+    marginBottom: 10,
   },
 });
