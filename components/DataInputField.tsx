@@ -1,14 +1,27 @@
 import React from "react";
-import { View, StyleSheet, Image } from "react-native";
+import {
+  View,
+  StyleSheet,
+  Image,
+  Keyboard,
+  InputAccessoryView,
+} from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { Text, TextInput, Switch, Icon, Button, SegmentedButtons } from "react-native-paper";
+import {
+  Text,
+  TextInput,
+  Switch,
+  Icon,
+  Button,
+  SegmentedButtons,
+} from "react-native-paper";
 import FileManager from "@/services/fileManager";
 
 type Props = {
   paramName: string;
   paramType?: string;
   value: string;
-  onValueChange: (value: string) => void; // Callback nach oben
+  onValueChange: (value: string) => void;
 };
 
 export default function DataInputField({
@@ -20,7 +33,6 @@ export default function DataInputField({
   function extractEnumElements(text: string) {
     const lastOpenParenIndex = text.lastIndexOf("(");
     const lastCloseParenIndex = text.lastIndexOf(")");
-
     if (
       lastOpenParenIndex !== -1 &&
       lastCloseParenIndex !== -1 &&
@@ -30,8 +42,8 @@ export default function DataInputField({
       return enumContent.split(",").map((element) => element.trim());
     }
     return [];
-  };
-  
+  }
+
   // Enum-Elemente aus paramName extrahieren
   const enumElements = extractEnumElements(paramName);
 
@@ -47,6 +59,9 @@ export default function DataInputField({
       : paramType === "ENUM"
       ? "alpha-e-circle"
       : "help-circle"; // Fallback, falls kein passender Typ
+
+  // Für INTEGER-Felder wird ein InputAccessoryView benötigt
+  const inputAccessoryViewID = "doneKeyboard";
 
   return (
     <View style={styles.container}>
@@ -132,13 +147,42 @@ export default function DataInputField({
           ) : null}
         </View>
       ) : (
-        // Standard: TEXT oder INTEGER
-        <TextInput
-          style={styles.input}
-          placeholder="Value...?"
-          value={value}
-          onChangeText={onValueChange}
-        />
+        // TEXT oder INTEGER: Für INTEGER wird der decimal-pad genutzt und ein InputAccessoryView eingefügt
+        <>
+          <TextInput
+            style={styles.input}
+            placeholder="Value...?"
+            value={value}
+            keyboardType={paramType === "INTEGER" ? "decimal-pad" : "default"}
+            inputAccessoryViewID={
+              paramType === "INTEGER" ? inputAccessoryViewID : undefined
+            }
+            onChangeText={(text) => {
+              if (paramType === "INTEGER") {
+                // Erlaube nur Ziffern und Komma
+                let numericText = text.replace(/[^0-9,]/g, "");
+                // Stelle sicher, dass nur ein Komma vorhanden ist
+                const commaCount = (numericText.match(/,/g) || []).length;
+                if (commaCount > 1) {
+                  const firstCommaIndex = numericText.indexOf(",");
+                  numericText =
+                    numericText.slice(0, firstCommaIndex + 1) +
+                    numericText.slice(firstCommaIndex + 1).replace(/,/g, "");
+                }
+                onValueChange(numericText);
+              } else {
+                onValueChange(text);
+              }
+            }}
+          />
+          {paramType === "INTEGER" && (
+            <InputAccessoryView nativeID={inputAccessoryViewID}>
+              <View style={styles.accessoryContainer}>
+                <Button onPress={Keyboard.dismiss}>Fertig</Button>
+              </View>
+            </InputAccessoryView>
+          )}
+        </>
       )}
     </View>
   );
@@ -192,5 +236,10 @@ const styles = StyleSheet.create({
   },
   segmentedButtons: {
     marginBottom: 3,
+  },
+  accessoryContainer: {
+    backgroundColor: "#eee",
+    padding: 8,
+    alignItems: "flex-end",
   },
 });
