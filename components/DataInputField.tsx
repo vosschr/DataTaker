@@ -76,7 +76,7 @@ export default function DataInputField({
           <SegmentedButtons
             style={styles.segmentedButtons}
             density="medium"
-            value={paramType}
+            value={value}
             onValueChange={onValueChange}
             buttons={enumElements.map((element) => ({
               value: element,
