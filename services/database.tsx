@@ -100,6 +100,11 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
      * @returns - Promise<object[]> table
      */
     queryAll: async (tableName: string): Promise<object[]> => {
+        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName);
+        console.log("DEBUG: tableSettings: ", tableSettings);
+
+        console.log("DEBUG: querying ", tableName);
+
         // Check if db and table exist
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
@@ -116,11 +121,23 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
                 throw new Error(`Table ${tableName} does not exist`);
             }
 
+            // If id column exists, include it in the query
+            if (tableSettings.auto_ids) {
+                // Get all rows from the table
+                const allRows: object[] = await db.getAllAsync(
+                    `SELECT id, * FROM [${tableName}];`
+                );
+
+                await db.closeAsync();
+                return allRows;
+            }
+
             // Get all rows from the table
             const allRows: object[] = await db.getAllAsync(
-                `SELECT id, * FROM [${tableName}];`
+                `SELECT * FROM [${tableName}];`
             );
 
+            await db.closeAsync();
             return allRows;
         } catch (error) {
             let message;
@@ -131,8 +148,6 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
                 message = String(error);
             }
             throw new Error(`Failed to query table ${tableName}: ${message}`);
-        } finally {
-            await db.closeAsync();
         }
     },
 
@@ -147,25 +162,29 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         };
      */
     addRow: async (tableName: string, record: object) => {
+        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName);
+        console.log("DEBUG: addRow: tableSettings: ", tableSettings);
+
+        console.log("DEBUG: adding to ", tableName);
         //TODO: check if db and table exist
         //TODO: check matching table schema to record
         const db = await SQLite.openDatabaseAsync(
             `${TABLE_DIR}${tableName}.db`
         ); // open db
-
-        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName);
-
         // Get the current date
         if (tableSettings.date) {
+            console.log("DEBUG: adding date to record");
             const currentDate = new Date().toISOString(); // ISO format date
             record = {
                 ...record,
                 date: currentDate
             }
         }
+        console.log("DEBUG: not adding date to record");
 
         // Get the current location
         if (tableSettings.geoTag) {
+            console.log("DEBUG: adding geotag to record");
             const geotag: { latitude: number, longitude: number } | null = await getCurrentLocation();
             record = {
                 ...record,
@@ -173,25 +192,30 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
                 latitude: geotag?.longitude
             }
         }
+        console.log("DEBUG: not adding geotag to record");
 
         // convert object to strings used for query
         const columns = Object.keys(record).map(key => `'${key}'`).join(", ");
+        console.log("DEBUG: columns: ", columns);
         const values = Object.values(record);
+        console.log("DEBUG: values: ", values);
         const placeholders = Object.keys(record)
             .map(() => "?")
             .join(", ");
+        console.log("DEBUG: placeholders: ", placeholders);
 
         const sql = `INSERT INTO [${tableName}] (${columns}) VALUES (${placeholders});`;
+        console.log("DEBUG: sql: ", sql);
         //example: "INSERT INTO animals (name, age, type) VALUES (?, ?, ?)"
         //the '?' will be replaced by the values (e.g. 'Findus', 12, 'Cat')
 
         //add to table with sql query
         await db.runAsync(sql, values);
         await db.closeAsync();
+        console.log("DEBUG: finished adding to ", tableName);
     },
 
     deleteDatabase: async (tableName: string) => {
-        //TODO: warning for deleting database
         console.log("DEBUG: deleting ", tableName);
         await SQLite.deleteDatabaseAsync(`${TABLE_DIR}${tableName}.db`); // might require some permissions
         const fileInfo = await FileSystem.getInfoAsync(
@@ -244,6 +268,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
      * console.log(columns); // Logs an array of column details for the "users" table
      */
     getColumns: async (tableName: string) => {
+        console.log("DEBUG: getting columns of ", tableName);
         //TODO: check if db and table exist
         //TODO: check matching table schema to record
         try {
@@ -252,12 +277,13 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
                 `${TABLE_DIR}${tableName}.db`
             );
 
-            // Execute the PRAGMA query and await the result
-            const result: TableInfo[] = await db.getAllAsync(
-                `PRAGMA table_info([${tableName}]);`
-            );
+            const query = `PRAGMA table_info([${tableName}]);`;
+            console.log("DEBUG: trying to query", query);
 
-            db.closeAsync();
+            // Execute the PRAGMA query and await the result
+            const result: TableInfo[] = await db.getAllAsync(query);
+
+            await db.closeAsync();
 
             // Log the result for testing
             console.log(result);
@@ -270,8 +296,10 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
     },
 
     getTableSettings: async (tableName: string): Promise<TableSettings> => {
+        console.log("DEBUG: getting table settings of ", tableName);
         // re-create table settings by looking ad column names
         const DBcols: TableInfo[] = await DataBase.getColumns(tableName);
+        console.log("DEBUG: DBcols: ", DBcols);
 
         return {
             auto_ids: DBcols.some(col => col.name === "id"),

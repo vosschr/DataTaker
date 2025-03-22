@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { TextInput, Button, Switch } from "react-native-paper";
+import { TextInput, Button, Switch, Text } from "react-native-paper";
 
 import GlobalStyles from "@/styles/globalStyles";
 import ParameterSelectionField from "@/components/ParameterSelectionField";
@@ -102,8 +102,9 @@ export default function VarChooser() {
           onChangeText={(text) => setTableName(text)}
         />
 
-        <View>
-          <View>
+        <View style={styles.settingsContainer}>
+          <View style={styles.setting}>
+            <Text style={styles.settingLabel}>Enable automated IDs</Text>
             <Switch
               value={tableSettings.auto_ids}
               onValueChange={(newVal) => 
@@ -114,7 +115,8 @@ export default function VarChooser() {
               }
             />
           </View>
-          <View>
+          <View style={styles.setting}>
+            <Text style={styles.settingLabel}>Include Date</Text>
             <Switch
               value={tableSettings.date}
               onValueChange={(newVal) => 
@@ -125,7 +127,8 @@ export default function VarChooser() {
               }
             />
           </View>
-          <View>
+          <View style={styles.setting}>
+            <Text style={styles.settingLabel}>Include Geo Tag</Text>
             <Switch
               value={tableSettings.geoTag}
               onValueChange={(newVal) => 
@@ -197,6 +200,36 @@ export default function VarChooser() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  settingsContainer: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    marginVertical: 8,
+    marginHorizontal: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 1 },
+    shadowRadius: 2,
+    elevation: 2,
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+    flexDirection: 'row',
+    rowGap: 2,
+    columnGap: 5,
+  },
+  setting: {
+    borderRadius: 8,
+    alignItems: "center",
+    backgroundColor: "#d4cce6",
+    flexWrap: 'wrap',
+    alignContent: 'flex-start',
+    flexDirection: 'row',
+  },
+  settingLabel: {
+    marginHorizontal: 5,
+    fontWeight: "bold",
   },
   button: {
     margin: 10,
