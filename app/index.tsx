@@ -140,7 +140,18 @@ export default function Index() {
                     console.error(`Error exporting table ${tableName}:`, error);
                 }
                 break;
-            //TODO: add more
+            case "exportZip":
+                console.log("DEBUG: pressed \"Export .zip\"");
+                try {
+                    console.log("DEBUG: zipping images and exporting " + tableName + ".");
+                    const tableObject: object[] = await DataBase.queryAll(tableName); // Wait for the Promise to resolve
+                    const imagePaths: string[] = await DataBase.getImagePaths(tableName);
+                    console.log("DEBUG: imagePaths arrived in index.tsx");
+                    await FileManager.shareFolderWithCSVAndImages(tableObject, imagePaths); // Wait for ZIP to be written
+                } catch (error) {
+                    console.error(`Error exporting table ${tableName}:`, error);
+                }
+                break;
         }
     }
 
@@ -156,7 +167,7 @@ export default function Index() {
           console.log("Fehler beim Abrufen der Metadaten:", error);
           return null;
         }
-      }
+    }
 
     return (
         <View

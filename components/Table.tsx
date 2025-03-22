@@ -58,6 +58,14 @@ export default function Table({ tableName, onAction }: TableProps) {
               }}
               title="Export .csv"
             />
+            <Menu.Item
+              leadingIcon="export-variant"
+              onPress={() => {
+                closeMenu();
+                onAction("exportZip", tableName);
+              }}
+              title="Export .zip"
+            />
           </Menu>
         )}
       />

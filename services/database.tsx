@@ -151,6 +151,25 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         }
     },
 
+    getImagePaths: async (tableName: string): Promise<string[]> => {
+        // this is a hack and will not worked if there is a string that looks like a path but isnt
+        //TODO: think of more robust solution
+        const tableData: object[] = await DataBase.queryAll(tableName);
+
+        // Function to check if a value is an image path (hacky)
+        const isImagePath = (value: any): boolean => {
+        return typeof value === 'string' && value.startsWith('file://');
+        };
+
+        // Extract all image paths from the table data
+        const imagePaths: string[] = tableData
+            .flatMap(row => Object.values(row)) // Flatten all values into a single array
+            .filter(value => isImagePath(value)); // Filter for values that are image paths
+
+        console.log("DEBUG: imagePaths: ", imagePaths);
+        return imagePaths;
+    },
+
     /** adding data to a given table
      * 
      * @param tableName - string name of the table (that is also by default the database name)
