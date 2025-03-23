@@ -22,9 +22,9 @@ export default function VarChooser() {
 
   const currentDateWithTime = new Date()
     .toISOString()
-    .replace(/T/, "_")
-    .replace(/:/g, "-")
-    .split(".")[0];
+    .replace(/T/, "_") // Replace 'T' with an underscore
+    .replace(/:/g, "-") // Replace ':' with a dash
+    .split(".")[0]; // Remove the milliseconds part
 
   const [tableName, setTableName] = useState("newTable_" + currentDateWithTime);
   const [tableSettings, setTableSettings] = useState<TableSettings>({
@@ -36,6 +36,7 @@ export default function VarChooser() {
   // State to hold the dynamically added fields
   const [parameters, setParameters] = useState<Param[]>([]);
 
+  // function to update a specific parameter
   function addParameterField() {
     setParameters([...parameters, { name: "", type: "" }]);
   }
@@ -46,22 +47,30 @@ export default function VarChooser() {
     setParameters(updatedParams);
   }
 
+  // function to submit data and create the table
   async function onDonePress() {
     if (parameters.length === 0) {
       console.log("DEBUG: No parameters defined");
       return;
     }
 
+    // transform the parameters into a schema
     const tableSchema: { [key: string]: string } = {};
     parameters.forEach((param) => {
       if (param.name && param.type) {
         tableSchema[param.name] = param.type;
+        console.log("DEBUG: table type:", param.type);
+        console.log("DEBUG: table name:", param.name);
+        console.log("DEBUG: tableSchema:", tableSchema);
       } else {
+        console.log("DEBUG: table type:", param.type);
+        console.log("DEBUG: table name:", param.name);
         console.log("DEBUG: Either param.name or param.type are missing");
       }
     });
 
     try {
+      // initialize the database table with the schema
       await DataBase.initializeDatabase(tableName, tableSchema, tableSettings);
       console.log("DEBUG: Database table created successfully!");
       router.push(`/dataInput?tableName=${encodeURIComponent(tableName)}`);
@@ -73,6 +82,7 @@ export default function VarChooser() {
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <View style={[styles.innerContainer, { width: "100%" }]}>
+        {/* Dynamic List of ParameterSelectionFields */}
         <FlatList
           data={parameters}
           keyExtractor={(_, index) => index.toString()}
@@ -148,8 +158,8 @@ export default function VarChooser() {
                     value={tableSettings.auto_ids}
                     onValueChange={(newVal) =>
                       setTableSettings((prevSettings) => ({
-                        ...prevSettings,
-                        auto_ids: newVal,
+                        ...prevSettings, // Keep all previous settings
+                        auto_ids: newVal, // Update only auto_ids
                       }))
                     }
                     // Use a color that stands out in dark mode

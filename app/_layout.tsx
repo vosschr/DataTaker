@@ -64,8 +64,8 @@ function ThemeConsumerComponent({ router }: { router: any }) {
           options={{ title: "Oops! Not Found", headerTitleAlign: "center" }}
         />
         <Stack.Screen
-            name="settings"
-            options={{title: "Settings", headerTitleAlign: "center"}}
+          name="settings"
+          options={{ title: "Settings", headerTitleAlign: "center" }}
         />
       </Stack>
     </PaperProvider>

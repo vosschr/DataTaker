@@ -35,8 +35,10 @@ export default function DataInput() {
           type: col.type,
           value: col.type === "BOOLEAN" ? "false" : "",
         }));
-
+      // Update the state once with the new array
       setParameters(newParameters);
+
+      // Log the new parameters for debugging
       console.log(`New Parameters: ${newParameters}`);
     } else {
       console.error("Invalid tableName: Expected a string but got ", tableName);
@@ -45,9 +47,13 @@ export default function DataInput() {
 
   useEffect(() => {
     loadDataInputFields();
-  }, []);
+  }, []); // this method i run when the page is loaded, the empty dependency list makes it only start once
 
-  // Update the value for a parameter with name paramName to newValue
+  /** Updates the value for a parameter with name paramName to newValue.
+     * 
+     * @param paramName string - name of the parameter
+     * @param newValue string - new value
+     */
   function onDataInputUpdate(paramName: string, newValue: string) {
     setParameters((prevValues) =>
       prevValues.map((param) =>
@@ -57,26 +63,38 @@ export default function DataInput() {
   }
 
   function hasMissingParams(): boolean {
+    // Prüfe, ob mindestens ein value leer ist
     return parameters.some((param) => !param.value.trim());
   }
 
   function hasAnyParams(): boolean {
+    // Prüfe, ob mindestens ein value da ist
     return parameters.some((param) => param.value.trim());
   }
 
   async function onNextButton() {
+    //TODO
+    // check for missing params -> warnings
+    // add current params to db
+    // ALTERNATIVELY: save current params in buffer, to add all of them together then done button is pressed
+    // push new dataInput Window on Stack
+
+    // Any fields empty?
     if (hasMissingParams()) {
       Alert.alert("Something's missing", "Please fill all parameters.");
       return;
     }
-
+    // Write to database
     try {
+      // Baue daraus ein Objekt { name: val1, age: val2, ... } für addRow
       const record = parameters.reduce((obj, param) => {
         obj[param.name] = param.value;
         return obj;
       }, {} as Record<string, string>);
 
       await DataBase.addRow(tableName as string, record);
+
+      // empty the fields
       setParameters(parameters.map((param) => ({ ...param, value: "" })));
     } catch (error) {
       console.error("Error while trying to add to DB:", error);
@@ -85,7 +103,9 @@ export default function DataInput() {
   }
 
   function onDoneButton() {
+    // check for missing params -> warnings
     if (hasAnyParams()) {
+      // add current params to db
       onNextButton();
     }
     console.log("Current route:", router);
@@ -106,6 +126,7 @@ export default function DataInput() {
       </View>
       {/* MAIN CONTENT VIEW */}
       <View style={{ width: "100%" }}>
+        {/* DATA INPUT FIELDS */}
         {parameters.map((param) => (
           <View key={param.name}>
             <DataInputField
