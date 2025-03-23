@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -14,6 +14,7 @@ import {
   Icon,
   Button,
   SegmentedButtons,
+  Menu,
 } from "react-native-paper";
 import FileManager from "@/services/fileManager";
 
@@ -47,6 +48,9 @@ export default function DataInputField({
   // Enum-Elemente aus paramName extrahieren
   const enumElements = extractEnumElements(paramName);
 
+  // State für Dropdown-Menü
+  const [menuVisible, setMenuVisible] = useState(false);
+
   const iconName =
     paramType === "TEXT"
       ? "format-text"
@@ -58,7 +62,7 @@ export default function DataInputField({
       ? "image"
       : paramType === "ENUM"
       ? "alpha-e-circle"
-      : "help-circle"; // Fallback, falls kein passender Typ
+      : "help-circle"; // Fallback
 
   // Für INTEGER-Felder wird ein InputAccessoryView benötigt
   const inputAccessoryViewID = "doneKeyboard";
@@ -86,18 +90,41 @@ export default function DataInputField({
           <Text style={styles.booleanLabel}>True</Text>
         </View>
       ) : paramType === "ENUM" ? (
-        // ENUM-UI
+        // ENUM-UI: Konditionaler Render
         <View>
-          <SegmentedButtons
-            style={styles.segmentedButtons}
-            density="medium"
-            value={value}
-            onValueChange={onValueChange}
-            buttons={enumElements.map((element) => ({
-              value: element,
-              label: element,
-            }))}
-          />
+          {enumElements.length <= 4 ? (
+            <SegmentedButtons
+              style={styles.segmentedButtons}
+              density="medium"
+              value={value}
+              onValueChange={onValueChange}
+              buttons={enumElements.map((element) => ({
+                value: element,
+                label: element,
+              }))}
+            />
+          ) : (
+            <Menu
+              visible={menuVisible}
+              onDismiss={() => setMenuVisible(false)}
+              anchor={
+                <Button mode="outlined" onPress={() => setMenuVisible(true)}>
+                  {value ? value : "Select Option"}
+                </Button>
+              }
+            >
+              {enumElements.map((option) => (
+                <Menu.Item
+                  key={option}
+                  onPress={() => {
+                    onValueChange(option);
+                    setMenuVisible(false);
+                  }}
+                  title={option}
+                />
+              ))}
+            </Menu>
+          )}
         </View>
       ) : paramType === "IMAGE" ? (
         // IMAGE-UI: Zwei Buttons nebeneinander
@@ -147,7 +174,7 @@ export default function DataInputField({
           ) : null}
         </View>
       ) : (
-        // TEXT oder INTEGER: Für INTEGER wird der decimal-pad genutzt und ein InputAccessoryView eingefügt
+        // TEXT oder INTEGER
         <>
           <TextInput
             style={styles.input}
@@ -159,9 +186,7 @@ export default function DataInputField({
             }
             onChangeText={(text) => {
               if (paramType === "INTEGER") {
-                // Erlaube nur Ziffern und Komma
                 let numericText = text.replace(/[^0-9,]/g, "");
-                // Stelle sicher, dass nur ein Komma vorhanden ist
                 const commaCount = (numericText.match(/,/g) || []).length;
                 if (commaCount > 1) {
                   const firstCommaIndex = numericText.indexOf(",");

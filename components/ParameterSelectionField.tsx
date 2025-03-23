@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
-import { TextInput, SegmentedButtons, Button } from "react-native-paper";
+import { View, StyleSheet } from "react-native";
+import { TextInput, SegmentedButtons, Button, IconButton } from "react-native-paper";
 
 export default function ParameterSelectionField({
   paramName,
@@ -14,8 +14,9 @@ export default function ParameterSelectionField({
   onTypeChange: (value: string) => void;
 }) {
   // Enum manager
-  const [enumList, setEnumList] = useState<string[]>(["", ""]); // Example: ["Dog", "Cat", ""]
+  const [enumList, setEnumList] = useState<string[]>(["", ""]);
 
+  // Called whenever the value in an Enum TextInput changes
   function updateEnumList(element: string, index: number) {
     const temp = [...enumList];
     temp[index] = element;
@@ -23,62 +24,50 @@ export default function ParameterSelectionField({
     onNameChange(updateEnumParamName(paramName));
   }
 
-  // Update paramName whenever enumList changes
-  useEffect(() => {
-    if (paramType === "ENUM") {
-      onNameChange(updateEnumParamName(paramName));
-    }
-  }, [enumList]); // Trigger this effect whenever enumList changes
+  // Removes a specific Enum element by index
+  function removeEnumElement(index: number) {
+    const temp = [...enumList];
+    temp.splice(index, 1);
+    setEnumList(temp);
+  }
 
+  // Adds another (empty) Enum TextInput field
   function increaseEnumSize() {
     setEnumList([...enumList, ""]);
   }
 
-  function decreaseEnumSize() {
-    if (enumList.length < 1) {
-      return;
+  // React to changes in enumList and update paramName
+  useEffect(() => {
+    if (paramType === "ENUM") {
+      onNameChange(updateEnumParamName(paramName));
     }
-    const temp = [...enumList];
-    temp.pop();
-    setEnumList(temp);
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enumList]);
 
-
+  // Creates the Enum string in the form (Value1,Value2,Value3,...)
   function getEnumString() {
-    let temp: string = "(";
-    for (const e of enumList) {
-      temp += e + ',';
-    }
-    if (temp[temp.length - 1] === ',') {
-      temp = temp.substring(0, temp.length - 1);
-    }
-    temp += ")";
-    return temp;
+    return "(" + enumList.join(",") + ")";
   }
 
+  // Removes any existing "(...)" part so we can rebuild it
   function cutEnumString(text: string): string {
     let temp = text;
-
-    // Remove old enum string
-    // Find the index of the last "("
     const lastOpenParenIndex = temp.lastIndexOf("(");
-    
-    // Find the index of the last ")"
     const lastCloseParenIndex = temp.lastIndexOf(")");
 
-    // Check if both parentheses exist and are in the correct order
-    if (lastOpenParenIndex !== -1
-      && lastCloseParenIndex !== -1
-      && lastOpenParenIndex < lastCloseParenIndex
-      && lastCloseParenIndex === temp.length - 1) {
-      // Remove the substring between the last "(" and the last ")", including the parentheses
-      temp = temp.slice(0, lastOpenParenIndex); // Part before the last "(";
+    if (
+      lastOpenParenIndex !== -1 &&
+      lastCloseParenIndex !== -1 &&
+      lastOpenParenIndex < lastCloseParenIndex &&
+      lastCloseParenIndex === temp.length - 1
+    ) {
+      temp = temp.slice(0, lastOpenParenIndex);
     }
-
     return temp;
   }
 
-  function updateEnumParamName(prev: string){
+  // Sets the parameter name (e.g. "EnumTest" => "EnumTest(Value1,Value2)")
+  function updateEnumParamName(prev: string) {
     return cutEnumString(prev) + getEnumString();
   }
 
@@ -91,66 +80,58 @@ export default function ParameterSelectionField({
         value={paramType}
         onValueChange={onTypeChange}
         buttons={[
-          {
-            value: "TEXT",
-            label: "Text",
-            //icon: "format-text",
-            style: styles.segmentedButtonItem,
-          },
-          {
-            value: "INTEGER",
-            label: "Integer",
-            //icon: "numeric",
-            style: styles.segmentedButtonItem,
-          },
-          {
-            value: "BOOLEAN",
-            label: "Bool",
-            //icon: "toggle-switch",
-            style: styles.segmentedButtonItem,
-          },
-          {
-            value: "IMAGE", 
-            label: "Picture", 
-            //icon: "image" ,
-            style: styles.segmentedButtonItem,
-          },
-          {
-            value: "ENUM", 
-            label: "Enum", 
-            //icon: "alpha-e-circle",
-            style: styles.segmentedButtonItem,
-          }
+          { value: "TEXT", label: "Text", style: styles.segmentedButtonItem },
+          { value: "INTEGER", label: "Integer", style: styles.segmentedButtonItem },
+          { value: "BOOLEAN", label: "Bool", style: styles.segmentedButtonItem },
+          { value: "IMAGE", label: "Picture", style: styles.segmentedButtonItem },
+          { value: "ENUM", label: "Enum", style: styles.segmentedButtonItem },
         ]}
       />
 
-      {/* Input for Parameter Name */}
+      {/* Parameter name input */}
       <TextInput
         mode="flat"
         label="Name of parameter"
         placeholder="Type something"
-        value={paramType === "ENUM" ? cutEnumString(paramName) : paramName} // paramType === "ENUM" ? cutEnumString(paramName) : paramName
-        onChangeText={paramType === "ENUM" ? (text) => onNameChange(updateEnumParamName(text)) : onNameChange}
+        value={paramType === "ENUM" ? cutEnumString(paramName) : paramName}
+        onChangeText={
+          paramType === "ENUM"
+            ? (text) => onNameChange(updateEnumParamName(text))
+            : onNameChange
+        }
+        style={styles.paramNameInput}
       />
-      {/* Enum Creation */}
+
+      {/* Enum-specific fields */}
       {paramType === "ENUM" && (
         <>
-          <Text>DEBUG: paramName: {paramName}</Text>
+          {/* List of all Enum entries */}
           {enumList.map((element, index) => (
-            <TextInput
-              key={index}
-              mode="flat"
-              label="Name of Enum Element"
-              placeholder="Type something"
-              value={element}
-              onChangeText={(text) => updateEnumList(text, index)}
-            />
+            <View key={index} style={styles.enumElementRow}>
+              <TextInput
+                mode="flat"
+                label={`Enum Value ${index + 1}`}
+                placeholder="Type something"
+                value={element}
+                onChangeText={(text) => updateEnumList(text, index)}
+                style={styles.enumTextInput}
+              />
+              <IconButton
+                icon="delete"
+                onPress={() => removeEnumElement(index)}
+                style={styles.deleteButton}
+              />
+            </View>
           ))}
-          <Button icon="plus" onPress={increaseEnumSize} mode="contained">
-              Add enum element
-          </Button>
-          <Button icon="plus" onPress={decreaseEnumSize} mode="contained">
-              Remove last enum element
+
+          {/* Button to add a new Enum element */}
+          <Button
+            icon="plus"
+            onPress={increaseEnumSize}
+            mode="contained"
+            style={styles.addEnumButton}
+          >
+            Add Enum element
           </Button>
         </>
       )}
@@ -175,11 +156,32 @@ const styles = StyleSheet.create({
   },
   segmentedButtons: {
     alignSelf: "center",
-    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], // Scale down the component
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], // Slightly shrink
     marginBottom: 3,
   },
   segmentedButtonItem: {
     minWidth: 80,
-    //borderRadius: 0,
-  }
+  },
+  paramNameInput: {
+    marginTop: 5,
+  },
+  enumElementRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginVertical: 4,
+    padding: 4,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 6,
+  },
+  enumTextInput: {
+    flex: 1,
+  },
+  deleteButton: {
+    marginLeft: 6,
+  },
+  addEnumButton: {
+    marginTop: 8,
+    alignSelf: "flex-start",
+  },
 });
