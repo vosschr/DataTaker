@@ -1,80 +1,50 @@
-import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
-import { createZipFile } from 'react-native-zip-stream'; // (does not work)
-//import { zip } from 'react-native-zip-archive'; (did not work)
-//import jszip from 'jszip'; (did not work)
+import * as Sharing from 'expo-sharing';
+import JSZip from 'jszip';
 
 export default class FileManager {
   /**
-   * Converts a plain JavaScript object into a CSV format and saves it to the
-   * specified directory under `${FileSystem.documentDirectory}DataTaker/data/`.
-   * @param data - An array of plain JavaScript objects.
-   * @returns A promise that resolves with the file URI on success or rejects with an error message.
+   * Creates a CSV string from an array of objects
+   * and returns this string (e.g. to add it to the ZIP).
    */
-  static async outputCSV(data: object[]): Promise<string> {
-    try {
-      if (!Array.isArray(data)) {
-        throw new Error('Input must be an array of plain objects.');
-      }
+  private static generateCSV(data: object[]): string {
+    if (!Array.isArray(data) || data.length === 0) {
+      return '';
+    }
 
-      if (data.length === 0) {
-        throw new Error('Input array must not be empty.');
-      }
+    // CSV header from the keys of the first object
+    const headers = Object.keys(data[0]);
 
-      // Generate the CSV header from the object keys
-      const headers = Object.keys(data[0]);
-
-      // Map the data to CSV rows
-      const csvRows = data.map((row: any) => {
-        return headers.map(header => {
+    // Generate rows
+    const csvRows = data.map((row: any) => {
+      return headers
+        .map(header => {
           const cell = row[header];
-          // Escape double quotes by doubling them and wrap fields containing commas or quotes in quotes
+          // If commas or quotes are present, escape them properly
           return typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))
             ? `"${cell.replace(/"/g, '""')}"`
             : cell;
-        }).join(',');
-      });
+        })
+        .join(',');
+    });
 
-      // Combine headers and rows into a single CSV string
-      const csvContent = [headers.join(','), ...csvRows].join('\n');
-
-      // Define file path
-      const filePath = `${FileSystem.documentDirectory}DataTaker/data/output.csv`;
-
-      // Write the CSV content to the file
-      await FileSystem.writeAsStringAsync(filePath, csvContent);
-
-      await Sharing.shareAsync(
-        `${FileSystem.documentDirectory}DataTaker/data/output.csv`, 
-        {dialogTitle: 'share or copy your DB via'}
-     ).catch(error =>{
-        console.log(error);
-     })
-
-      return filePath;
-    } catch (error) {
-      console.error('Error generating CSV:', error);
-      throw error;
-    }
+    // Combine header and rows
+    const csvContent = [headers.join(','), ...csvRows].join('\n');
+    return csvContent;
   }
 
   /**
-   * Copys a picture from cache to app-directory and returns new path
-   * @param localUri - Path from ImagePicker (file:///...)
-   * @returns New Path in App-Directory
+   * Copies an image from the cache directory to the app directory and returns the new path.
    */
   static async saveImageToAppFolder(localUri: string): Promise<string> {
     try {
       const imagesDir = `${FileSystem.documentDirectory}DataTaker/images/`;
-      // Generate folder (if needed)
       await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
 
-      // Generate name
       const timestamp = Date.now();
-      const fileName = `photo_${timestamp}.jpg`; 
+      const fileName = `photo_${timestamp}.jpg`;
       const newPath = imagesDir + fileName;
 
-      // Copy
       await FileSystem.copyAsync({
         from: localUri,
         to: newPath,
@@ -82,115 +52,106 @@ export default class FileManager {
 
       return newPath;
     } catch (error) {
-      console.error("Error saving image:", error);
+      console.error('Error saving image:', error);
       throw error;
     }
   }
 
   /**
-   * Shares a folder containing a CSV file and an images subfolder.
-   * @param data - An array of plain JavaScript objects to be converted to CSV.
-   * @param imageUris - An array of URIs of the images to be included in the images subfolder.
-   * @returns A promise that resolves when the folder is shared.
+   * Reads an array of objects (data) as CSV
+   * plus images (imageUris) from the file system,
+   * packs everything into a ZIP in memory using JSZip, and shares it.
    */
   static async shareFolderWithCSVAndImages(data: object[], imageUris: string[]) {
     try {
-      // Create a temporary directory
-      console.log("DEBUG: creating temporary directory.");
-      const tempDir: string = `${FileSystem.cacheDirectory}DataTakerExport_${Date.now()}/`;
-      console.log("DEBUG: tempDir (source): ", tempDir);
-      await FileSystem.makeDirectoryAsync(tempDir, { intermediates: true });
+      console.log('DEBUG: Generating in-memory ZIP with JSZip.');
 
-      // Generate and save the CSV file
-      console.log("DEBUG: generating CSV file.");
-      const csvFilePath = `${tempDir}output.csv`;
-      console.log("DEBUG: csvFilePath: ", csvFilePath);
-      await this.csvToPath(data, csvFilePath);
+      // 1) Create a new JSZip instance
+      const zip = new JSZip();
 
-      // Create an images subfolder
-      console.log("DEBUG: creating images subfolder.");
-      const imagesDir = `${tempDir}images/`;
-      console.log("DEBUG: imagesDir: ", imagesDir);
-      await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
+      // 2) Generate CSV and add it to the ZIP
+      const csvContent = this.generateCSV(data);
+      zip.file('output.csv', csvContent);
 
-      // Copy images to the images subfolder
-      console.log("DEBUG: copying images to images subfolder.");
+      // 3) Create an images subfolder in the ZIP
+      const imagesFolder = zip.folder('images');
+      if (!imagesFolder) {
+        throw new Error('Could not create images folder in ZIP.');
+      }
+
+      // 4) For each image, read it as Base64 and add it to the images/ folder
       for (const imageUri of imageUris) {
         const timestamp = Date.now();
         const fileName = `photo_${timestamp}.jpg`;
-        const newPath = `${imagesDir}${fileName}`;
-        await FileSystem.copyAsync({
-          from: imageUri,
-          to: newPath,
+
+        // Read the image as Base64
+        const base64Data = await FileSystem.readAsStringAsync(imageUri, {
+          encoding: FileSystem.EncodingType.Base64,
         });
+
+        // Add the Base64 data to the images/ folder in the ZIP
+        imagesFolder.file(fileName, base64Data, { base64: true });
       }
 
-      // Compress the folder into a ZIP file (doesn't seem to work)
-      console.log("DEBUG: compressing folder into ZIP file.");
-      const zipFilePath: string = `${FileSystem.cacheDirectory}DataTakerExport_${Date.now()}.zip`;
-      console.log("DEBUG: zipFilePath (target): ", zipFilePath);
-      //await zip([tempDir], zipFilePath);
-      const exampleCreateZipFile = async () => {
-        try {
-          const success = await createZipFile(tempDir, zipFilePath);
-          console.log('Zip creation successful:', success);
-        } catch (error) {
-          console.error('Error creating zip file:', error);
-        }
-      };
+      // 5) Generate the ZIP in Base64 format
+      const base64Zip = await zip.generateAsync({ type: 'base64' });
 
-      await exampleCreateZipFile();
+      // 6) Write the ZIP file to the device
+      const zipFilePath = `${FileSystem.cacheDirectory}DataTakerExport_${Date.now()}.zip`;
+      await FileSystem.writeAsStringAsync(zipFilePath, base64Zip, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
-      // Share the ZIP file
-      console.log("DEBUG: sharing ZIP file.");
+      // 7) Share the ZIP file
+      console.log('DEBUG: Sharing ZIP file at', zipFilePath);
       await Sharing.shareAsync(zipFilePath, {
         dialogTitle: 'Share your data and images',
-      }).catch(error =>{
+      }).catch(error => {
         console.log(error);
-      })
+      });
 
-      // Share the folder (Android only) (does also not seem to work)
-      //await Sharing.shareAsync(tempDir, {
-      //  dialogTitle: 'Share your data and images',
-      //});
-
-      // Clean up temporary files and directories
-      console.log("DEBUG: cleaning up temporary files and directories.");
-      await FileSystem.deleteAsync(tempDir, { idempotent: true });
+      // 8) Clean up: delete the ZIP file (optional)
       await FileSystem.deleteAsync(zipFilePath, { idempotent: true });
 
+      console.log('DEBUG: Finished sharing ZIP file.');
     } catch (error) {
-      console.error('Error sharing folder:', error);
+      console.error('Error creating or sharing ZIP:', error);
       throw error;
     }
   }
 
   /**
-   * Helper method to output CSV to a specific file path.
-   * @param data - An array of plain JavaScript objects.
-   * @param filePath - The file path where the CSV should be saved.
+   * Example function to export/share a CSV separately.
    */
-  private static async csvToPath(data: object[], filePath: string): Promise<void> {
-    if (!Array.isArray(data)) {
-      throw new Error('Input must be an array of plain objects.');
+  static async outputCSV(data: object[]): Promise<string> {
+    try {
+      if (!Array.isArray(data) || data.length === 0) {
+        throw new Error('Input data array must not be empty.');
+      }
+
+      const csvContent = this.generateCSV(data);
+      const filePath = `${FileSystem.documentDirectory}DataTaker/data/output.csv`;
+
+      // Create the directory if needed
+      await FileSystem.makeDirectoryAsync(
+        `${FileSystem.documentDirectory}DataTaker/data/`,
+        { intermediates: true }
+      );
+
+      // Write the CSV content to the file
+      await FileSystem.writeAsStringAsync(filePath, csvContent);
+
+      // Share the file
+      await Sharing.shareAsync(filePath, {
+        dialogTitle: 'Share or copy your DB via',
+      }).catch(error => {
+        console.log(error);
+      });
+
+      return filePath;
+    } catch (error) {
+      console.error('Error generating CSV:', error);
+      throw error;
     }
-
-    if (data.length === 0) {
-      throw new Error('Input array must not be empty.');
-    }
-
-    const headers = Object.keys(data[0]);
-    const csvRows = data.map((row: any) => {
-      return headers.map(header => {
-        const cell = row[header];
-        return typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))
-          ? `"${cell.replace(/"/g, '""')}"`
-          : cell;
-      }).join(',');
-    });
-
-    const csvContent = [headers.join(','), ...csvRows].join('\n');
-    await FileSystem.writeAsStringAsync(filePath, csvContent);
   }
-  
 }

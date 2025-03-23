@@ -1,4 +1,3 @@
-import React from "react";
 import { View, StyleSheet, Image } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { Text, TextInput, Switch, Icon, Button, SegmentedButtons } from "react-native-paper";

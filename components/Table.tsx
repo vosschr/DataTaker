@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Card, Menu, IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
