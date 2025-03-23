@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { StyleSheet } from "react-native";
 import { Card, Menu, IconButton } from "react-native-paper";
 import { useRouter } from "expo-router";
@@ -57,6 +57,14 @@ export default function Table({ tableName, onAction }: TableProps) {
                 onAction("export", tableName);
               }}
               title="Export .csv"
+            />
+            <Menu.Item
+              leadingIcon="export-variant"
+              onPress={() => {
+                closeMenu();
+                onAction("exportZip", tableName);
+              }}
+              title="Export .zip"
             />
           </Menu>
         )}
