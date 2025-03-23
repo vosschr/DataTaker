@@ -15,11 +15,17 @@ export default class FileManager {
     // CSV header from the keys of the first object
     const headers = Object.keys(data[0]);
 
-    // Generate rows
+    // go through each row and get the string value of each cell
     const csvRows = data.map((row: any) => {
       return headers
         .map(header => {
-          const cell = row[header];
+          let cell = row[header];
+          
+          // If the cell is a string and contains slashes, keep everything after the last slash
+          if (typeof cell === 'string' && cell.includes('/')) {
+            cell = cell.split('/').pop(); // Get everything after the last slash
+          }
+    
           // If commas or quotes are present, escape them properly
           return typeof cell === 'string' && (cell.includes(',') || cell.includes('"'))
             ? `"${cell.replace(/"/g, '""')}"`

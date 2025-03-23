@@ -3,8 +3,6 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScrollView, View, StyleSheet, Alert } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
-import GlobalStyles from "@/styles/globalStyles";
-
 import { DataBase, TableInfo } from "@/services/database";
 
 import DataInputField from "@/components/DataInputField";
@@ -134,7 +132,6 @@ export default function DataInput() {
         <View
             style={[
                 styles.container,
-                GlobalStyles.backgroundColor,
             ]}
         >
             <View style={styles.headerContainer}>

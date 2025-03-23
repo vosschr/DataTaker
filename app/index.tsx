@@ -181,7 +181,9 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: "center",
         width: "100%",
+        marginTop: 10,
     },
     newTableButton: {
         width: "100%",       // 80% Breite

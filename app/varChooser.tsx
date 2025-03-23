@@ -3,7 +3,6 @@ import { View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
 import { TextInput, Button, Switch, Text } from "react-native-paper";
 
-import GlobalStyles from "@/styles/globalStyles";
 import ParameterSelectionField from "@/components/ParameterSelectionField";
 import { DataBase, TableSettings } from "@/services/database";
 
@@ -86,8 +85,6 @@ export default function VarChooser() {
     <View
       style={[
         styles.container,
-        GlobalStyles.backgroundColor,
-        GlobalStyles.container,
       ]}
     >
       {/* MAIN CONTENT VIEW */}
