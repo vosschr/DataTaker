@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput, SegmentedButtons, Button, IconButton } from "react-native-paper";
+import { TextInput, SegmentedButtons, Button, IconButton, useTheme } from "react-native-paper";
 
 export default function ParameterSelectionField({
   paramName,
@@ -13,7 +13,8 @@ export default function ParameterSelectionField({
   onNameChange: (value: string) => void;
   onTypeChange: (value: string) => void;
 }) {
-  // Enum manager
+  const theme = useTheme();
+  // Enum manager state
   const [enumList, setEnumList] = useState<string[]>(["", ""]);
 
   // Called whenever the value in an Enum TextInput changes
@@ -54,7 +55,6 @@ export default function ParameterSelectionField({
     let temp = text;
     const lastOpenParenIndex = temp.lastIndexOf("(");
     const lastCloseParenIndex = temp.lastIndexOf(")");
-
     if (
       lastOpenParenIndex !== -1 &&
       lastCloseParenIndex !== -1 &&
@@ -72,7 +72,7 @@ export default function ParameterSelectionField({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* Choose parameter type */}
       <SegmentedButtons
         style={styles.segmentedButtons}
@@ -107,7 +107,7 @@ export default function ParameterSelectionField({
         <>
           {/* List of all Enum entries */}
           {enumList.map((element, index) => (
-            <View key={index} style={styles.enumElementRow}>
+            <View key={index} style={[styles.enumElementRow, { borderColor: theme.colors.outline }]}>
               <TextInput
                 mode="flat"
                 label={`Enum Value ${index + 1}`}
@@ -131,7 +131,7 @@ export default function ParameterSelectionField({
             mode="contained"
             style={styles.addEnumButton}
           >
-            Add Enum element
+            Add enum element
           </Button>
         </>
       )}
@@ -141,14 +141,12 @@ export default function ParameterSelectionField({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     marginVertical: 0,
     marginBottom: 8,
     marginHorizontal: 10,
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
@@ -156,7 +154,7 @@ const styles = StyleSheet.create({
   },
   segmentedButtons: {
     alignSelf: "center",
-    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], // Slightly shrink
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }],
     marginBottom: 3,
   },
   segmentedButtonItem: {
@@ -171,7 +169,6 @@ const styles = StyleSheet.create({
     marginVertical: 4,
     padding: 4,
     borderWidth: 1,
-    borderColor: "#ccc",
     borderRadius: 6,
   },
   enumTextInput: {
