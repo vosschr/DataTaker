@@ -68,9 +68,10 @@ export default class FileManager {
    * plus images (imageUris) from the file system,
    * packs everything into a ZIP in memory using JSZip, and shares it.
    */
-  static async shareFolderWithCSVAndImages(data: object[], imageUris: string[]) {
+  static async shareFolderWithCSVAndImages(data: object[], imageUris: string[], onProgress?: (progress: number) => void) {
     try {
       console.log('DEBUG: Generating in-memory ZIP with JSZip.');
+      onProgress && onProgress(0);
 
       // 1) Create a new JSZip instance
       const zip = new JSZip();
@@ -78,14 +79,18 @@ export default class FileManager {
       // 2) Generate CSV and add it to the ZIP
       const csvContent = this.generateCSV(data);
       zip.file('output.csv', csvContent);
+      onProgress && onProgress(10);
 
       // 3) Create an images subfolder in the ZIP
       const imagesFolder = zip.folder('images');
       if (!imagesFolder) {
         throw new Error('Could not create images folder in ZIP.');
       }
+      onProgress && onProgress(20);
 
       // 4) For each image, read it as Base64 and add it to the images/ folder
+      const totalImages = imageUris.length;
+      let count = 0;
       for (const imageUri of imageUris) {
         const timestamp = Date.now();
         const fileName = `photo_${timestamp}.jpg`;
@@ -97,16 +102,22 @@ export default class FileManager {
 
         // Add the Base64 data to the images/ folder in the ZIP
         imagesFolder.file(fileName, base64Data, { base64: true });
+        count++;
+        // Update progress from 20% to 60%
+        const progress = 20 + (count / totalImages) * 40;
+        onProgress && onProgress(progress);
       }
 
       // 5) Generate the ZIP in Base64 format
       const base64Zip = await zip.generateAsync({ type: 'base64' });
+      onProgress && onProgress(80);
 
       // 6) Write the ZIP file to the device
       const zipFilePath = `${FileSystem.cacheDirectory}DataTakerExport_${Date.now()}.zip`;
       await FileSystem.writeAsStringAsync(zipFilePath, base64Zip, {
         encoding: FileSystem.EncodingType.Base64,
       });
+      onProgress && onProgress(90);
 
       // 7) Share the ZIP file
       console.log('DEBUG: Sharing ZIP file at', zipFilePath);
@@ -115,6 +126,7 @@ export default class FileManager {
       }).catch(error => {
         console.log(error);
       });
+      onProgress && onProgress(100);
 
       // 8) Clean up: delete the ZIP file (optional)
       await FileSystem.deleteAsync(zipFilePath, { idempotent: true });

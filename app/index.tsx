@@ -4,7 +4,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import Table from "@/components/Table"
 
-import { Button, useTheme } from "react-native-paper";
+import { Button, useTheme, ActivityIndicator } from "react-native-paper";
 
 import { DataBase } from "@/services/database";
 import FileManager from "@/services/fileManager";
@@ -19,6 +19,9 @@ export default function Index() {
 
     // useState to store tables read from files
     const [tables, setTables] = useState<string[]>([]);
+    // State to control ZIP export loading indicator and progress
+    const [isExporting, setIsExporting] = useState(false);
+    const [exportProgress, setExportProgress] = useState(0);
 
     function onPlusPress() {
         router.push("/varChooser");
@@ -142,13 +145,22 @@ export default function Index() {
             case "exportZip":
                 console.log("DEBUG: pressed \"Export .zip\"");
                 try {
+                    setIsExporting(true);
                     console.log("DEBUG: zipping images and exporting " + tableName + ".");
                     const tableObject: object[] = await DataBase.queryAll(tableName); // Wait for the Promise to resolve
                     const imagePaths: string[] = await DataBase.getImagePaths(tableName);
                     console.log("DEBUG: imagePaths arrived in index.tsx");
-                    await FileManager.shareFolderWithCSVAndImages(tableObject, imagePaths); // Wait for ZIP to be written
+                    await FileManager.shareFolderWithCSVAndImages(
+                        tableObject,
+                        imagePaths,
+                        (progress) => setExportProgress(progress)
+                    ); // Wait for ZIP to be written
+                    console.log("DEBUG: ZIP export completed");
                 } catch (error) {
                     console.error(`Error exporting table ${tableName}:`, error);
+                } finally {
+                    setIsExporting(false);
+                    setExportProgress(0);
                 }
                 break;
         }
@@ -175,8 +187,15 @@ export default function Index() {
                     />
                 ))}
             </ScrollView>
+            {isExporting && (
+                <View style={styles.loadingOverlay}>
+                    <ActivityIndicator size="large" color={theme.colors.primary} />
+                    <Text style={{ color: theme.colors.onBackground }}>
+                        Exporting ZIP... {Math.round(exportProgress)}%
+                    </Text>
+                </View>
+            )}
         </View>
-
     );
 }
 
@@ -195,5 +214,15 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         width: "80%",
+    },
+    loadingOverlay: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: "rgba(0,0,0,0.5)",
+        justifyContent: "center",
+        alignItems: "center",
     },
 });
