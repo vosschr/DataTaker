@@ -251,7 +251,8 @@ const styles = StyleSheet.create({
   },
   imageButtonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
+    gap: 5,
+    justifyContent: "center",
     marginBottom: 10,
   },
   previewImage: {
