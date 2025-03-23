@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { View, StyleSheet, Alert } from "react-native";
+import { ScrollView, View, StyleSheet, Alert } from "react-native";
 import { Text, Icon, Button, useTheme } from "react-native-paper";
+
 import { DataBase, TableInfo } from "@/services/database";
 import DataInputField from "@/components/DataInputField";
 
@@ -125,7 +126,7 @@ export default function DataInput() {
         </Text>
       </View>
       {/* MAIN CONTENT VIEW */}
-      <View style={{ width: "100%" }}>
+      <ScrollView style={{ width: "100%" }}>
         {/* DATA INPUT FIELDS */}
         {parameters.map((param) => (
           <View key={param.name}>
@@ -137,7 +138,7 @@ export default function DataInput() {
             />
           </View>
         ))}
-      </View>
+      </ScrollView>
       {/* FOOTER */}
       <View style={styles.footer}>
         <Button
