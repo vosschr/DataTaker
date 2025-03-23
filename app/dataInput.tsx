@@ -3,7 +3,8 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScrollView, View, StyleSheet, Alert } from "react-native";
 import { Text, Icon } from "react-native-paper";
 
-import { DataBase, TableInfo } from "@/services/database";
+import { DataBase, TableInfo, TableSettings } from "@/services/database";
+import { requestLocationPermission } from "@/services/geotag";
 
 import DataInputField from "@/components/DataInputField";
 import { Button } from "react-native-paper";
@@ -75,6 +76,11 @@ export default function DataInput() {
         );
     }
 
+    async function includesGeoTag(): Promise<boolean> {
+        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName as string);
+        return tableSettings.geoTag;
+    }
+
     function hasMissingParams(): boolean {
         // Prüfe, ob mindestens ein value leer ist
         return parameters.some(param => !param.value.trim());
@@ -95,6 +101,12 @@ export default function DataInput() {
         // Any fields empty?
         if (hasMissingParams()) {
             Alert.alert("Somethings missing", "Please fill all parameters.");
+            return;
+        }
+
+        if (await includesGeoTag() && !await requestLocationPermission()) {
+            // check if permissions are granted
+            Alert.alert("Permission denied", "Location permission is required to add data.");
             return;
         }
 

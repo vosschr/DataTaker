@@ -12,7 +12,7 @@ import * as Location from 'expo-location';
  * 
  * @returns {Promise<boolean>} - True if permissions are granted, false otherwise.
  */
-const requestLocationPermission = async (): Promise<boolean> => {
+export const requestLocationPermission = async (): Promise<boolean> => {
     const { status } = await Location.requestForegroundPermissionsAsync();
     if (status !== 'granted') {
         console.error('Permission to access location was denied');
