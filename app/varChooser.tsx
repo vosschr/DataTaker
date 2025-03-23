@@ -93,53 +93,7 @@ export default function VarChooser() {
       {/* MAIN CONTENT VIEW */}
       <View style={[styles.container, { width: "100%" }]}>
         {/* TABLE NAME TEXTINPUT FIELD */}
-        <TextInput
-          style={{ marginHorizontal: 10, marginTop: 10 }}
-          label="Name of the table"
-          mode="outlined"
-          placeholder="Enter new table name"
-          value={tableName}
-          onChangeText={(text) => setTableName(text)}
-        />
-
-        <View style={styles.settingsContainer}>
-          <View style={styles.setting}>
-            <Text style={styles.settingLabel}>Enable automated IDs</Text>
-            <Switch
-              value={tableSettings.auto_ids}
-              onValueChange={(newVal) => 
-                setTableSettings((prevSettings) => ({
-                  ...prevSettings,  // Keep all previous settings
-                  auto_ids: newVal, // Update only auto_ids
-                }))
-              }
-            />
-          </View>
-          <View style={styles.setting}>
-            <Text style={styles.settingLabel}>Include Date</Text>
-            <Switch
-              value={tableSettings.date}
-              onValueChange={(newVal) => 
-                setTableSettings((prevSettings) => ({
-                  ...prevSettings,  // Keep all previous settings
-                  date: newVal, // Update only date
-                }))
-              }
-            />
-          </View>
-          <View style={styles.setting}>
-            <Text style={styles.settingLabel}>Include Geo Tag</Text>
-            <Switch
-              value={tableSettings.geoTag}
-              onValueChange={(newVal) => 
-                setTableSettings((prevSettings) => ({
-                  ...prevSettings,  // Keep all previous settings
-                  geoTag: newVal, // Update only geoTag
-                }))
-              }
-            />
-          </View>
-        </View>
+        
 
         {/* Dynamic List of ParameterSelectionFields */}
         <FlatList
@@ -175,6 +129,57 @@ export default function VarChooser() {
                   Remove last parameter
                 </Button>
               )}
+              <View style={styles.emptySpace}/>
+            </>
+          }
+          ListHeaderComponent={
+            <>
+              <TextInput
+                style={{ marginHorizontal: 10, marginTop: 10 }}
+                label="Name of the table"
+                mode="outlined"
+                placeholder="Enter new table name"
+                value={tableName}
+                onChangeText={(text) => setTableName(text)}
+              />
+              <View style={styles.settingsContainer}>
+                <View style={styles.setting}>
+                  <Text style={styles.settingLabel}>Enable automated IDs</Text>
+                  <Switch
+                    value={tableSettings.auto_ids}
+                    onValueChange={(newVal) => 
+                      setTableSettings((prevSettings) => ({
+                        ...prevSettings,  // Keep all previous settings
+                        auto_ids: newVal, // Update only auto_ids
+                      }))
+                    }
+                  />
+                </View>
+                <View style={styles.setting}>
+                  <Text style={styles.settingLabel}>Include Date</Text>
+                  <Switch
+                    value={tableSettings.date}
+                    onValueChange={(newVal) => 
+                      setTableSettings((prevSettings) => ({
+                        ...prevSettings,  // Keep all previous settings
+                        date: newVal, // Update only date
+                      }))
+                    }
+                  />
+                </View>
+                <View style={styles.setting}>
+                  <Text style={styles.settingLabel}>Include Geo Tag</Text>
+                  <Switch
+                    value={tableSettings.geoTag}
+                    onValueChange={(newVal) => 
+                      setTableSettings((prevSettings) => ({
+                        ...prevSettings,  // Keep all previous settings
+                        geoTag: newVal, // Update only geoTag
+                      }))
+                    }
+                  />
+                </View>
+              </View>
             </>
           }
         />
@@ -238,5 +243,8 @@ const styles = StyleSheet.create({
   },
   buttonLabel: {
     fontSize: 20,
+  },
+  emptySpace: {
+    height: 200,
   },
 });
