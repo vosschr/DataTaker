@@ -94,27 +94,32 @@ export default function ParameterSelectionField({
           {
             value: "TEXT",
             label: "Text",
-            icon: "format-text",
+            //icon: "format-text",
+            style: styles.segmentedButtonItem,
           },
           {
             value: "INTEGER",
             label: "Integer",
-            icon: "numeric",
+            //icon: "numeric",
+            style: styles.segmentedButtonItem,
           },
           {
             value: "BOOLEAN",
-            label: "Boolean",
-            icon: "toggle-switch",
+            label: "Bool",
+            //icon: "toggle-switch",
+            style: styles.segmentedButtonItem,
           },
           {
             value: "IMAGE", 
             label: "Picture", 
-            icon: "image" 
+            //icon: "image" ,
+            style: styles.segmentedButtonItem,
           },
           {
             value: "ENUM", 
             label: "Enum", 
-            icon: "alpha-e-circle"
+            //icon: "alpha-e-circle",
+            style: styles.segmentedButtonItem,
           }
         ]}
       />
@@ -157,9 +162,9 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: "#fff",
     borderRadius: 8,
-    paddingVertical: 16,
+    paddingVertical: 8,
     paddingHorizontal: 12,
-    marginVertical: 8,
+    marginVertical: 0,
     marginHorizontal: 10,
     shadowColor: "#000",
     shadowOpacity: 0.1,
@@ -168,6 +173,12 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   segmentedButtons: {
+    alignSelf: "center",
+    transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }], // Scale down the component
     marginBottom: 3,
   },
+  segmentedButtonItem: {
+    minWidth: 80,
+    //borderRadius: 0,
+  }
 });
