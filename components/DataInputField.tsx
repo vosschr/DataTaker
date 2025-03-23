@@ -15,6 +15,7 @@ import {
   Button,
   SegmentedButtons,
   Menu,
+  useTheme,
 } from "react-native-paper";
 import FileManager from "@/services/fileManager";
 
@@ -31,6 +32,9 @@ export default function DataInputField({
   value,
   onValueChange,
 }: Props) {
+  const theme = useTheme();
+
+  // Extract enum elements from paramName
   function extractEnumElements(text: string) {
     const lastOpenParenIndex = text.lastIndexOf("(");
     const lastCloseParenIndex = text.lastIndexOf(")");
@@ -45,12 +49,12 @@ export default function DataInputField({
     return [];
   }
 
-  // Enum-Elemente aus paramName extrahieren
   const enumElements = extractEnumElements(paramName);
 
-  // State für Dropdown-Menü
+  // Dropdown menu state for ENUM with more than 4 options
   const [menuVisible, setMenuVisible] = useState(false);
 
+  // Determine icon based on paramType
   const iconName =
     paramType === "TEXT"
       ? "format-text"
@@ -62,35 +66,45 @@ export default function DataInputField({
       ? "image"
       : paramType === "ENUM"
       ? "alpha-e-circle"
-      : "help-circle"; // Fallback
+      : "help-circle";
 
-  // Für INTEGER-Felder wird ein InputAccessoryView benötigt
+  // InputAccessoryView for INTEGER fields
   const inputAccessoryViewID = "doneKeyboard";
 
   return (
-    <View style={styles.container}>
-      {/* Titelzeile mit Icon und ParamName */}
+    <View
+      style={[
+        styles.container,
+        { backgroundColor: theme.colors.surface, shadowColor: theme.dark ? "#000" : "#000" },
+      ]}
+    >
+      {/* Title row with icon and paramName */}
       <View style={styles.titleRow}>
-        <Icon source={iconName} size={20} />
-        <Text variant="titleMedium" style={styles.title}>
+        <Icon source={iconName} size={20} color={theme.colors.onSurface} />
+        <Text
+          variant="titleMedium"
+          style={[styles.title, { color: theme.colors.onSurface }]}
+        >
           {paramName}
         </Text>
       </View>
 
       {paramType === "BOOLEAN" ? (
-        // BOOLEAN-UI
+        // BOOLEAN UI
         <View style={styles.booleanContainer}>
-          <Text style={styles.booleanLabel}>False</Text>
+          <Text style={[styles.booleanLabel, { color: theme.colors.onSurface }]}>
+            False
+          </Text>
           <Switch
             value={value === "true"}
-            onValueChange={(newValue) =>
-              onValueChange(newValue ? "true" : "false")
-            }
+            onValueChange={(newValue) => onValueChange(newValue ? "true" : "false")}
           />
-          <Text style={styles.booleanLabel}>True</Text>
+          <Text style={[styles.booleanLabel, { color: theme.colors.onSurface }]}>
+            True
+          </Text>
         </View>
       ) : paramType === "ENUM" ? (
-        // ENUM-UI: Konditionaler Render
+        // ENUM UI: Condition for <= 4 or dropdown
         <View>
           {enumElements.length <= 4 ? (
             <SegmentedButtons
@@ -127,7 +141,7 @@ export default function DataInputField({
           )}
         </View>
       ) : paramType === "IMAGE" ? (
-        // IMAGE-UI: Zwei Buttons nebeneinander
+        // IMAGE UI: Two buttons side by side
         <View>
           <View style={styles.imageButtonContainer}>
             <Button
@@ -174,11 +188,12 @@ export default function DataInputField({
           ) : null}
         </View>
       ) : (
-        // TEXT oder INTEGER
+        // TEXT or INTEGER
         <>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
             placeholder="Value...?"
+            placeholderTextColor={theme.colors.onSurfaceDisabled}
             value={value}
             keyboardType={paramType === "INTEGER" ? "decimal-pad" : "default"}
             inputAccessoryViewID={
@@ -186,7 +201,9 @@ export default function DataInputField({
             }
             onChangeText={(text) => {
               if (paramType === "INTEGER") {
+                // allow only digits and comma
                 let numericText = text.replace(/[^0-9,]/g, "");
+                // ensure only one comma
                 const commaCount = (numericText.match(/,/g) || []).length;
                 if (commaCount > 1) {
                   const firstCommaIndex = numericText.indexOf(",");
@@ -203,7 +220,7 @@ export default function DataInputField({
           {paramType === "INTEGER" && (
             <InputAccessoryView nativeID={inputAccessoryViewID}>
               <View style={styles.accessoryContainer}>
-                <Button onPress={Keyboard.dismiss}>Fertig</Button>
+                <Button onPress={Keyboard.dismiss}>Done</Button>
               </View>
             </InputAccessoryView>
           )}
@@ -215,13 +232,11 @@ export default function DataInputField({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
     borderRadius: 8,
     paddingVertical: 16,
     paddingHorizontal: 12,
     marginVertical: 8,
     marginHorizontal: 16,
-    shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
@@ -238,7 +253,7 @@ const styles = StyleSheet.create({
     marginLeft: 6,
   },
   input: {
-    backgroundColor: "#fff",
+    // no hardcoded background color
   },
   booleanContainer: {
     flexDirection: "row",

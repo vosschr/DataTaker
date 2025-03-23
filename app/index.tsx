@@ -6,7 +6,7 @@ import Table from "@/components/Table"
 
 import GlobalStyles from "@/styles/globalStyles";
 
-import { Button } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 
 import { DataBase } from "@/services/database";
 import FileManager from "@/services/fileManager";
@@ -17,6 +17,7 @@ const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
 
 export default function Index() {
     const router = useRouter();
+    const theme = useTheme(); 
 
     // useState to store tables read from files
     const [tables, setTables] = useState<string[]>([]);
@@ -173,7 +174,7 @@ export default function Index() {
         <View
             style={[
                 styles.container,
-                GlobalStyles.backgroundColor,
+                { backgroundColor: theme.colors.background },
                 GlobalStyles.container,
             ]}
         >

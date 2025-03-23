@@ -5,19 +5,21 @@ const customLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#FF7F00", // Orange
+    /*primary: "#FF7F00", // Orange
     background: "#ffffff",
-    text: "#000000",
+    text: "#000000",*/
+    text: "#000000"
   },
 };
 
 const customDarkTheme = {
   ...MD3DarkTheme,
   colors: {
-    ...MD3DarkTheme.colors,
+    ...MD3DarkTheme.colors,/*
     primary: "#FF7F00", // Orange
     background: "#000000",
-    text: "#ffffff",
+    text: "#ffffff",*/
+    text: "#ffffff"
   },
 };
 
