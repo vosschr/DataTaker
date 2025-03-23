@@ -92,20 +92,14 @@ export default function DataInput() {
     }
 
     async function onNextButton() {
-        //TODO
-        // check for missing params -> warnings
-        // add current params to db
-        // ALTERNATIVELY: save current params in buffer, to add all of them together then done button is pressed
-        // push new dataInput Window on Stack
-
         // Any fields empty?
         if (hasMissingParams()) {
             Alert.alert("Somethings missing", "Please fill all parameters.");
             return;
         }
 
+        // check if permissions are granted
         if (await includesGeoTag() && !await requestLocationPermission()) {
-            // check if permissions are granted
             Alert.alert("Permission denied", "Location permission is required to add data.");
             return;
         }
@@ -129,11 +123,11 @@ export default function DataInput() {
         }
     }
 
-    function onDoneButton() {
+    async function onDoneButton() {
         // check for missing params -> warnings
         if (hasAnyParams()) {
             // add current params to db
-            onNextButton();
+            await onNextButton();
         }
         // back to index
         console.log("Current route:", router);
