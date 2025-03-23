@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         width: "100%",
-        marginTop: 10,
+        paddingTop: 10,
     },
     newTableButton: {
         width: "100%",       // 80% Breite
