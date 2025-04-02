@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { View, FlatList, StyleSheet } from "react-native";
 import { useRouter } from "expo-router";
-import { TextInput, Button, Switch, Text } from "react-native-paper";
+import { TextInput, Button, Switch, Text, useTheme } from "react-native-paper";
 
 import ParameterSelectionField from "@/components/ParameterSelectionField";
 import { DataBase, TableSettings } from "@/services/database";
@@ -13,6 +13,7 @@ type Param = {
 
 export default function VarChooser() {
   const router = useRouter();
+  const theme = useTheme();
 
   const currentDateWithTime = new Date()
     .toISOString()
@@ -28,7 +29,7 @@ export default function VarChooser() {
     auto_ids: false,
     date: false,
     geoTag: false,
-  })
+  });
 
   // state to hold the dynamically added fields
   const [parameters, setParameters] = useState<Param[]>([]);
@@ -82,16 +83,11 @@ export default function VarChooser() {
   }
 
   return (
-    <View
-      style={[
-        styles.container,
-      ]}
-    >
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       {/* MAIN CONTENT VIEW */}
       <View style={[styles.container, { width: "100%" }]}>
         {/* TABLE NAME TEXTINPUT FIELD */}
         
-
         {/* Dynamic List of ParameterSelectionFields */}
         <FlatList
           data={parameters}
@@ -126,54 +122,63 @@ export default function VarChooser() {
                   Remove last parameter
                 </Button>
               )}
-              <View style={styles.emptySpace}/>
+              <View style={styles.emptySpace} />
             </>
           }
           ListHeaderComponent={
             <>
               <TextInput
-                style={{ marginHorizontal: 10, marginTop: 10 }}
+                style={{ marginHorizontal: 10, marginTop: 10, backgroundColor: theme.colors.surface }}
                 label="Name of the table"
                 mode="outlined"
                 placeholder="Enter new table name"
                 value={tableName}
                 onChangeText={(text) => setTableName(text)}
               />
-              <View style={styles.settingsContainer}>
-                <View style={styles.setting}>
-                  <Text style={styles.settingLabel}>Enable automated IDs</Text>
+              <View style={[styles.settingsContainer, { backgroundColor: theme.colors.surface }]}>
+                <View style={[styles.setting, { backgroundColor: theme.dark ? "#FF7F00" : "#d4cce6" }]}>
+                  <Text style={[styles.settingLabel, { color: theme.colors.onSurface }]}>
+                    Enable automated IDs
+                  </Text>
                   <Switch
                     value={tableSettings.auto_ids}
-                    onValueChange={(newVal) => 
+                    onValueChange={(newVal) =>
                       setTableSettings((prevSettings) => ({
                         ...prevSettings,  // Keep all previous settings
                         auto_ids: newVal, // Update only auto_ids
                       }))
                     }
+                    color={theme.colors.primary}
                   />
                 </View>
-                <View style={styles.setting}>
-                  <Text style={styles.settingLabel}>Include Date</Text>
+                <View style={[styles.setting, { backgroundColor: theme.dark ? "#FF7F00" : "#d4cce6" }]}>
+                  <Text style={[styles.settingLabel, { color: theme.colors.onSurface }]}>
+                    Include Date
+                  </Text>
                   <Switch
                     value={tableSettings.date}
-                    onValueChange={(newVal) => 
+                    onValueChange={(newVal) =>
                       setTableSettings((prevSettings) => ({
                         ...prevSettings,  // Keep all previous settings
                         date: newVal, // Update only date
                       }))
                     }
+                    color={theme.colors.primary}
                   />
                 </View>
-                <View style={styles.setting}>
-                  <Text style={styles.settingLabel}>Include Geo Tag</Text>
+                <View style={[styles.setting, { backgroundColor: theme.dark ? "#FF7F00" : "#d4cce6" }]}>
+                  <Text style={[styles.settingLabel, { color: theme.colors.onSurface }]}>
+                    Include Geo Tag
+                  </Text>
                   <Switch
                     value={tableSettings.geoTag}
-                    onValueChange={(newVal) => 
+                    onValueChange={(newVal) =>
                       setTableSettings((prevSettings) => ({
                         ...prevSettings,  // Keep all previous settings
                         geoTag: newVal, // Update only geoTag
                       }))
                     }
+                    color={theme.colors.primary}
                   />
                 </View>
               </View>
@@ -215,19 +220,19 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 1 },
     shadowRadius: 2,
     elevation: 2,
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-    flexDirection: 'row',
+    flexWrap: "wrap",
+    alignContent: "flex-start",
+    flexDirection: "row",
     rowGap: 2,
     columnGap: 5,
   },
   setting: {
     borderRadius: 8,
     alignItems: "center",
-    backgroundColor: "#d4cce6",
-    flexWrap: 'wrap',
-    alignContent: 'flex-start',
-    flexDirection: 'row',
+    flexWrap: "wrap",
+    alignContent: "flex-start",
+    flexDirection: "row",
+    padding: 5,
   },
   settingLabel: {
     marginHorizontal: 5,

@@ -4,7 +4,7 @@ import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
 import Table from "@/components/Table"
 
-import { Button } from "react-native-paper";
+import { Button, useTheme } from "react-native-paper";
 
 import { DataBase } from "@/services/database";
 import FileManager from "@/services/fileManager";
@@ -15,6 +15,7 @@ const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
 
 export default function Index() {
     const router = useRouter();
+    const theme = useTheme(); // Dynamisches Theme aus PaperProvider
 
     // useState to store tables read from files
     const [tables, setTables] = useState<string[]>([]);
@@ -103,9 +104,7 @@ export default function Index() {
         switch (action) {
             case "take data":
                 console.log("DEBUG: " + action + " on " + tableName + ".");
-                router.push(
-                    `/dataInput?tableName=${encodeURIComponent(tableName)}`
-                ); // navigate to data input page
+                router.push(`/dataInput?tableName=${encodeURIComponent(tableName)}`); // navigate to data input page
                 break;
             case "delete":
                 Alert.alert(
@@ -154,11 +153,7 @@ export default function Index() {
     }
 
     return (
-        <View
-            style={[
-                styles.container,
-            ]}
-        >
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <ScrollView style={styles.scrollView}>
                 {/* Plus Button to start new Table setup (link to varChooser) */}
                 <Button icon="plus" onPress={onPlusPress} mode="contained" style={styles.newTableButton} >
@@ -174,7 +169,6 @@ export default function Index() {
                 ))}
             </ScrollView>
         </View>
-
     );
 }
 
@@ -183,7 +177,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "center",
         width: "100%",
-        marginTop: 10,
+        marginTop: 0,
     },
     newTableButton: {
         width: "100%",       // 80% Breite

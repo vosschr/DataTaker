@@ -1,17 +1,22 @@
 import React, { useContext } from "react";
 import { View, StyleSheet } from "react-native";
-import { Switch, Text } from "react-native-paper";
+import { Switch, Text, useTheme } from "react-native-paper";
 import { ThemeContext } from "../context/ThemeContext";
 
 export default function Settings() {
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
+  const theme = useTheme();
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Settings</Text>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text style={[styles.header, { color: theme.colors.onSurface }]}>Settings</Text>
       <View style={styles.row}>
-        <Text style={styles.label}>Dark Mode</Text>
-        <Switch value={isDarkMode} onValueChange={toggleDarkMode} />
+        <Text style={[styles.label, { color: theme.colors.onSurface }]}>Dark Mode</Text>
+        <Switch
+          value={isDarkMode}
+          onValueChange={toggleDarkMode}
+          color={theme.colors.primary}
+        />
       </View>
       {/* Hier können weitere Einstellungen ergänzt werden */}
     </View>

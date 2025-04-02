@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet } from "react-native";
-import { TextInput, SegmentedButtons, Button, IconButton } from "react-native-paper";
+import { TextInput, SegmentedButtons, Button, IconButton, useTheme } from "react-native-paper";
 
 export default function ParameterSelectionField({
   paramName,
@@ -13,6 +13,8 @@ export default function ParameterSelectionField({
   onNameChange: (value: string) => void;
   onTypeChange: (value: string) => void;
 }) {
+  const theme = useTheme();
+
   // Enum manager
   const [enumList, setEnumList] = useState<string[]>(["", ""]);
 
@@ -72,7 +74,7 @@ export default function ParameterSelectionField({
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       {/* Choose parameter type */}
       <SegmentedButtons
         style={styles.segmentedButtons}
@@ -141,7 +143,7 @@ export default function ParameterSelectionField({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "#fff", // This will be overridden by the theme
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
