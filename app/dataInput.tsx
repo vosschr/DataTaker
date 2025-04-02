@@ -24,6 +24,8 @@ export default function DataInput() {
 
     // state to hold the fields
     const [parameters, setParameters] = useState<Param[]>([]);
+    // state to block multiple saving attempts
+    const [isSaving, setIsSaving] = useState(false);
 
     async function loadDataInputFields() {
         // Ensure tableName is a string
@@ -92,23 +94,26 @@ export default function DataInput() {
     }
 
     async function onNextButton() {
-        // Any fields empty?
+        if (isSaving) return; // prevent multiple concurrent saves
+        setIsSaving(true);
+
         if (hasMissingParams()) {
             Alert.alert("Somethings missing", "Please fill all parameters.");
+            setIsSaving(false);
             return;
         }
 
         // check if permissions are granted
         if (await includesGeoTag() && !await requestLocationPermission()) {
             Alert.alert("Permission denied", "Location permission is required to add data.");
+            setIsSaving(false);
             return;
         }
 
-        // Write to database
         try {
-            // Baue daraus ein Objekt { name: val1, age: val2, ... } für addRow
+            // Build an object { name: val1, age: val2, ... } for addRow
             const record = parameters.reduce<Record<string, string>>((obj, param) => {
-                // Falls param.type === "BOOLEAN" und der Wert leer ist, setze "false"
+                // For BOOLEAN fields, if the value is empty, save "false"
                 if (param.type === "BOOLEAN" && !param.value.trim()) {
                     obj[param.name] = "false";
                 } else {
@@ -121,10 +126,11 @@ export default function DataInput() {
 
             // empty the fields
             setParameters(parameters.map(param => ({ ...param, value: "" })));
-
         } catch (error) {
             console.error("Error while trying to add to DB:", error);
             Alert.alert("Error", "Error occured while saving");
+        } finally {
+            setIsSaving(false);
         }
     }
 
@@ -166,21 +172,25 @@ export default function DataInput() {
             {/* FOOTER */}
             <View style={styles.footer}>
                 {/* NEXT BUTTON */}
-                <Button style={styles.button}
+                <Button
+                    style={styles.button}
                     labelStyle={styles.buttonLabel}
                     icon="page-next"
                     onPress={onNextButton}
                     mode="contained"
+                    disabled={isSaving}
                 >
                     Next
                 </Button>
 
                 {/* DONE BUTTON */}
-                <Button style={styles.button}
+                <Button
+                    style={styles.button}
                     labelStyle={styles.buttonLabel}
                     icon="check"
                     onPress={onDoneButton}
                     mode="contained"
+                    disabled={isSaving}
                 >
                     Done
                 </Button>
