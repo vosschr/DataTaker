@@ -73,7 +73,7 @@ export default function VarChooser() {
       // initialize the database table with the schema
       await DataBase.initializeDatabase(tableName, tableSchema, tableSettings);
       console.log("DEBUG: Database table created successfully!");
-      router.push(
+      router.replace(
         `/dataInput?tableName=${encodeURIComponent(tableName)}`
       ); // navigate to data input page
       console.log("DEBUG: Pushed button to link to data input page.");
