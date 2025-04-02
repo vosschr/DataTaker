@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { View, StyleSheet, Modal, TouchableOpacity, Image as RNImage } from "react-native";
-import { ActivityIndicator, DataTable, Text, Button } from "react-native-paper";
+import { ActivityIndicator, DataTable, Text, Button, useTheme } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 import { DataBase } from "@/services/database";
 
@@ -10,6 +10,7 @@ export default function TableDataScreen() {
   const [columns, setColumns] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const theme = useTheme();
 
   // Helper-Funktion: Gibt nur den Dateinamen zurück
   const extractFileName = (path: string): string => {
@@ -46,8 +47,8 @@ export default function TableDataScreen() {
   }
 
   return (
-    <View style={styles.container}>
-      <Text variant="headlineMedium" style={styles.title}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onSurface }]}>
         {tableName}
       </Text>
 
@@ -94,7 +95,7 @@ export default function TableDataScreen() {
 
       <Modal visible={!!selectedImage} transparent={true} animationType="fade">
         <View style={styles.modalBackground}>
-          <View style={styles.modalContainer}>
+          <View style={[styles.modalContainer, { backgroundColor: theme.colors.surface }]}>
             {selectedImage && (
               <RNImage source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
             )}

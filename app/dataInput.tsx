@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { ScrollView, View, StyleSheet, Alert } from "react-native";
-import { Text, Icon } from "react-native-paper";
+import { Text, Icon, useTheme } from "react-native-paper";
 
 import { DataBase, TableInfo, TableSettings } from "@/services/database";
 import { requestLocationPermission } from "@/services/geotag";
@@ -20,6 +20,7 @@ export default function DataInput() {
     // the table name is passed when dataInput.tsx is pushed on the stack (by varChooser), we have to fetch it like this:
     const { tableName } = useLocalSearchParams();
     const router = useRouter();
+    const theme = useTheme();
 
     // state to hold the fields
     const [parameters, setParameters] = useState<Param[]>([]);
@@ -41,7 +42,6 @@ export default function DataInput() {
                     // Wenn der Spaltentyp BOOLEAN ist, dann Default "false", sonst ""
                     value: col.type === "BOOLEAN" ? "false" : "",
                 }));
-
 
             // Update the state once with the new array
             setParameters(newParameters);
@@ -135,15 +135,11 @@ export default function DataInput() {
     }
 
     return (
-        <View
-            style={[
-                styles.container,
-            ]}
-        >
+        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
             <View style={styles.headerContainer}>
                 {/* TABLE NAME */}
-                <Icon source="table" size={20} />
-                <Text variant="headlineMedium" style={styles.headerText}>
+                <Icon source="table" size={20} color={theme.colors.onSurface} />
+                <Text variant="headlineMedium" style={[styles.headerText, { color: theme.colors.onSurface }]}>
                     {tableName}
                 </Text>
             </View>
@@ -210,7 +206,6 @@ const styles = StyleSheet.create({
         fontSize: 19,
         fontWeight: 'bold',
         marginLeft: 5,
-
     },
     headerContainer: {
         flexDirection: "row",

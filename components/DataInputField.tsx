@@ -15,6 +15,7 @@ import {
   Button,
   SegmentedButtons,
   Menu,
+  useTheme,
 } from "react-native-paper";
 import FileManager from "@/services/fileManager";
 
@@ -31,6 +32,8 @@ export default function DataInputField({
   value,
   onValueChange,
 }: Props) {
+  const theme = useTheme();
+
   function extractEnumElements(text: string) {
     const lastOpenParenIndex = text.lastIndexOf("(");
     const lastCloseParenIndex = text.lastIndexOf(")");
@@ -68,7 +71,7 @@ export default function DataInputField({
   const inputAccessoryViewID = "doneKeyboard";
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.surface }]}>
       {/* Titelzeile mit Icon und ParamName */}
       <View style={styles.titleRow}>
         <Icon source={iconName} size={20} />
@@ -177,7 +180,7 @@ export default function DataInputField({
         // TEXT oder INTEGER
         <>
           <TextInput
-            style={styles.input}
+            style={[styles.input, { backgroundColor: theme.colors.surface }]}
             placeholder="Value...?"
             value={value}
             keyboardType={paramType === "INTEGER" ? "decimal-pad" : "default"}

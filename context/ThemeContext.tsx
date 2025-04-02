@@ -5,7 +5,7 @@ const customLightTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: "#FF7F00", // Orange
+    primary: "#00008b", // Darkblue
     background: "#ffffff",
     text: "#000000",
   },
