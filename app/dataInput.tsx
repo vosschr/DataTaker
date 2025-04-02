@@ -81,9 +81,9 @@ export default function DataInput() {
         return tableSettings.geoTag;
     }
 
+    // Modified to ignore BOOLEAN parameters when checking for missing values
     function hasMissingParams(): boolean {
-        // Prüfe, ob mindestens ein value leer ist
-        return parameters.some(param => !param.value.trim());
+        return parameters.some(param => param.type !== "BOOLEAN" && !param.value.trim());
     }
 
     function hasAnyParams(): boolean {
@@ -107,10 +107,15 @@ export default function DataInput() {
         // Write to database
         try {
             // Baue daraus ein Objekt { name: val1, age: val2, ... } für addRow
-            const record = parameters.reduce((obj, param) => {
-                obj[param.name] = param.value;
+            const record = parameters.reduce<Record<string, string>>((obj, param) => {
+                // Falls param.type === "BOOLEAN" und der Wert leer ist, setze "false"
+                if (param.type === "BOOLEAN" && !param.value.trim()) {
+                    obj[param.name] = "false";
+                } else {
+                    obj[param.name] = param.value;
+                }
                 return obj;
-            }, {} as Record<string, string>);
+            }, {});
 
             await DataBase.addRow(tableName as string, record);
 

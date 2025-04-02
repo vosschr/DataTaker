@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity, Image as RNImage } from "react-native";
+import { View, StyleSheet, Modal, TouchableOpacity, Image as RNImage, ScrollView } from "react-native";
 import { ActivityIndicator, DataTable, Text, Button, useTheme } from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 import { DataBase } from "@/services/database";
@@ -55,42 +55,44 @@ export default function TableDataScreen() {
       {loading ? (
         <ActivityIndicator size="large" />
       ) : (
-        <DataTable>
-          <DataTable.Header>
-            {columns.map((column) => (
-              <DataTable.Title key={column}>{column}</DataTable.Title>
+        <ScrollView style={{ flex: 1 }}>
+          <DataTable>
+            <DataTable.Header>
+              {columns.map((column) => (
+                <DataTable.Title key={column}>{column}</DataTable.Title>
+              ))}
+            </DataTable.Header>
+
+            {tableData.map((row, index) => (
+              <DataTable.Row key={index}>
+                {columns.map((column) => {
+                  const cellValue = String(row[column]);
+                  let displayValue = cellValue;
+                  if (isImagePath(cellValue)) {
+                    displayValue = extractFileName(cellValue);
+                  }
+                  return (
+                    <DataTable.Cell key={`${index}-${column}`}>
+                      {isImagePath(cellValue) ? (
+                        <TouchableOpacity onPress={() => setSelectedImage(cellValue)}>
+                          <Text style={styles.imageText}>{displayValue}</Text>
+                        </TouchableOpacity>
+                      ) : (
+                        <Text>{displayValue}</Text>
+                      )}
+                    </DataTable.Cell>
+                  );
+                })}
+              </DataTable.Row>
             ))}
-          </DataTable.Header>
 
-          {tableData.map((row, index) => (
-            <DataTable.Row key={index}>
-              {columns.map((column) => {
-                const cellValue = String(row[column]);
-                let displayValue = cellValue;
-                if (isImagePath(cellValue)) {
-                  displayValue = extractFileName(cellValue);
-                }
-                return (
-                  <DataTable.Cell key={`${index}-${column}`}>
-                    {isImagePath(cellValue) ? (
-                      <TouchableOpacity onPress={() => setSelectedImage(cellValue)}>
-                        <Text style={styles.imageText}>{displayValue}</Text>
-                      </TouchableOpacity>
-                    ) : (
-                      <Text>{displayValue}</Text>
-                    )}
-                  </DataTable.Cell>
-                );
-              })}
-            </DataTable.Row>
-          ))}
-
-          {tableData.length === 0 && (
-            <DataTable.Row>
-              <DataTable.Cell>No data found</DataTable.Cell>
-            </DataTable.Row>
-          )}
-        </DataTable>
+            {tableData.length === 0 && (
+              <DataTable.Row>
+                <DataTable.Cell>No data found</DataTable.Cell>
+              </DataTable.Row>
+            )}
+          </DataTable>
+        </ScrollView>
       )}
 
       <Modal visible={!!selectedImage} transparent={true} animationType="fade">
