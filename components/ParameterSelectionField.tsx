@@ -48,7 +48,7 @@ export default function ParameterSelectionField({
 
   // Creates the Enum string in the form (Value1,Value2,Value3,...)
   function getEnumString() {
-    return "(" + enumList.join(",") + ")";
+    return "(" + enumList.join("|") + ")";
   }
 
   // Removes any existing "(...)" part so we can rebuild it
@@ -68,7 +68,7 @@ export default function ParameterSelectionField({
     return temp;
   }
 
-  // Sets the parameter name (e.g. "EnumTest" => "EnumTest(Value1,Value2)")
+  // Sets the parameter name (e.g. "EnumTest" => "EnumTest(Value1|Value2)")
   function updateEnumParamName(prev: string) {
     return cutEnumString(prev) + getEnumString();
   }

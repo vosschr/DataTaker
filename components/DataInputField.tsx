@@ -43,7 +43,7 @@ export default function DataInputField({
       lastOpenParenIndex < lastCloseParenIndex
     ) {
       const enumContent = text.slice(lastOpenParenIndex + 1, lastCloseParenIndex);
-      return enumContent.split(",").map((element) => element.trim());
+      return enumContent.split("|").map((element) => element.trim());
     }
     return [];
   }
