@@ -100,31 +100,6 @@ export default function VarChooser() {
               onTypeChange={(value) => updateParameter(index, "type", value)}
             />
           )}
-          ListFooterComponent={
-            <>
-              <Button
-                icon="plus-box"
-                onPress={addParameterField}
-                mode="contained"
-                style={{ marginHorizontal: 10, marginVertical: 5 }}
-              >
-                Add new parameter
-              </Button>
-              {parameters.length > 0 && (
-                <Button
-                  icon="delete"
-                  onPress={() => {
-                    setParameters(parameters.slice(0, -1));
-                  }}
-                  mode="contained"
-                  style={{ marginHorizontal: 10, marginTop: 5 }}
-                >
-                  Remove last parameter
-                </Button>
-              )}
-              <View style={styles.emptySpace} />
-            </>
-          }
           ListHeaderComponent={
             <>
               <TextInput
@@ -184,21 +159,41 @@ export default function VarChooser() {
               </View>
             </>
           }
+          ListFooterComponent={
+            <>
+              <Button
+                icon="plus-box"
+                onPress={addParameterField}
+                mode="contained"
+                style={{ marginHorizontal: 10, marginVertical: 5 }}
+              >
+                Add new parameter
+              </Button>
+              {parameters.length > 0 && (
+                <Button
+                  icon="delete"
+                  onPress={() => {
+                    setParameters(parameters.slice(0, -1));
+                  }}
+                  mode="contained"
+                  style={{ marginHorizontal: 10, marginTop: 5 }}
+                >
+                  Remove last parameter
+                </Button>
+              )}
+              {/* DONE BUTTON */}
+              <Button
+                style={styles.button}
+                labelStyle={styles.buttonLabel}
+                onPress={onDonePress}
+                mode="contained"
+              >
+                Create Table (final)
+              </Button>
+              <View style={styles.emptySpace} />
+            </>
+          }
         />
-      </View>
-
-      {/* FOOTER */}
-      <View style={{ width: "100%", marginBottom: 10 }}>
-        {/* DONE BUTTON */}
-        <Button
-          style={styles.button}
-          labelStyle={styles.buttonLabel}
-          icon="check"
-          onPress={onDonePress}
-          mode="contained"
-        >
-          Done
-        </Button>
       </View>
     </View>
   );
@@ -240,6 +235,7 @@ const styles = StyleSheet.create({
   },
   button: {
     margin: 10,
+    marginTop: 20,
     paddingVertical: 15, // Vertikaler Innenabstand für größere Höhe
     paddingHorizontal: 30, // Horizontaler Innenabstand für breitere Buttons
   },
