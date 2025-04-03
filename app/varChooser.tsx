@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { View, FlatList, StyleSheet } from "react-native";
+import { View, FlatList, StyleSheet, Alert } from "react-native";
 import { useRouter } from "expo-router";
 import { TextInput, Button, Switch, Text, useTheme } from "react-native-paper";
 
@@ -51,6 +51,15 @@ export default function VarChooser() {
     // check if there are any parameters
     if (parameters.length === 0) {
       console.log("DEBUG: No parameters defined");
+      Alert.alert("No parameters defined", "Please add at least one parameter type to the table");
+      return;
+    }
+
+    // check if any parameter name is empty
+    const emptyParam = parameters.find((param) => param.name === "");
+    if (emptyParam) {
+      console.log("DEBUG: Parameter name is empty:", emptyParam);
+      Alert.alert("Empty parameter name", "Please fill in all parameter names");
       return;
     }
 
