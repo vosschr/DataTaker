@@ -76,6 +76,7 @@ export default function Table({ tableName, onAction }: TableProps) {
 const styles = StyleSheet.create({
   card: {
     width: "100%",
+    height: 66,
     alignSelf: "center",
     elevation: 2, // kleiner Schatten
     marginBottom: 5, // unterer Abstand zu jedem anderen Table

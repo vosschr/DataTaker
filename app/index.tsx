@@ -161,11 +161,13 @@ export default function Index() {
                 </Button>
                 {/* TABLES */}
                 {tables.map((table, index) => (
-                    <Table
-                        key={index}
-                        tableName={table}
-                        onAction={handlePickerAction}
-                    />
+                    <View style={styles.table}>
+                        <Table
+                            key={index}
+                            tableName={table}
+                            onAction={handlePickerAction}
+                        />
+                    </View>
                 ))}
             </ScrollView>
         </View>
@@ -175,17 +177,21 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
+        alignSelf: "center",
         width: "100%",
         marginTop: 0,
     },
     newTableButton: {
-        width: "100%",       // 80% Breite
+        width: "80%",       // 80% Breite
         alignSelf: "center",
-        marginTop: 5,      // etwas Abstand nach oben
-        marginBottom: 5,
+        marginTop: 14,      // etwas Abstand nach oben
+        marginBottom: 14,
     },
     scrollView: {
-        width: "80%",
+        width: "100%",
     },
+    table: {
+        alignSelf: "center",
+        width: "80%"
+    }
 });
