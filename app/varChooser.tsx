@@ -188,7 +188,7 @@ export default function VarChooser() {
                 onPress={onDonePress}
                 mode="contained"
               >
-                Create Table (final)
+                Finish Creating Table
               </Button>
               <View style={styles.emptySpace} />
             </>
