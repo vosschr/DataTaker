@@ -3,6 +3,13 @@ import * as Sharing from 'expo-sharing';
 import JSZip from 'jszip';
 
 export default class FileManager {
+
+  private static uriToFileName(uri: string): string {
+    // Extract the file name from the URI
+    const parts = uri.split('/');
+    return parts[parts.length - 1];
+  }
+
   /**
    * Creates a CSV string from an array of objects
    * and returns this string (e.g. to add it to the ZIP).
@@ -47,8 +54,7 @@ export default class FileManager {
       const imagesDir = `${FileSystem.documentDirectory}DataTaker/images/`;
       await FileSystem.makeDirectoryAsync(imagesDir, { intermediates: true });
 
-      const timestamp = Date.now();
-      const fileName = `photo_${timestamp}.jpg`;
+      const fileName = this.uriToFileName(localUri);
       const newPath = imagesDir + fileName;
 
       await FileSystem.copyAsync({
@@ -87,8 +93,7 @@ export default class FileManager {
 
       // 4) For each image, read it as Base64 and add it to the images/ folder
       for (const imageUri of imageUris) {
-        const timestamp = Date.now();
-        const fileName = `photo_${timestamp}.jpg`;
+        const fileName = this.uriToFileName(imageUri);
 
         // Read the image as Base64
         const base64Data = await FileSystem.readAsStringAsync(imageUri, {
