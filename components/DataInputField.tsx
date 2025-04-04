@@ -46,7 +46,7 @@ export default function DataInputField({
                 lastOpenParenIndex + 1,
                 lastCloseParenIndex
             );
-            return enumContent.split("|").map((element) => element.trim());
+            return enumContent.split(/\s*[|,]\s*/).map((element) => element.trim());
         }
         return [];
     }
