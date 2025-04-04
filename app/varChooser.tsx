@@ -281,16 +281,28 @@ export default function VarChooser() {
                                 </Button>
                             )}
                             {/* DONE BUTTON */}
-                            {!isDoneButtonDisabled && (
-                              <Button
-                                style={styles.button}
-                                labelStyle={styles.buttonLabel}
-                                onPress={() => {}}
-                                mode="contained"
-                              >
-                                Table was already created
-                              </Button>
-                            )}
+                            <View>
+                              {isDoneButtonDisabled && (
+                                <Button
+                                  style={styles.button}
+                                  labelStyle={styles.buttonLabel}
+                                  onPress={() => {}}
+                                  mode="contained"
+                                >
+                                  Table was already created
+                                </Button>
+                              )}
+                              {!isDoneButtonDisabled && (
+                                <Button
+                                  style={styles.button}
+                                  labelStyle={styles.buttonLabel}
+                                  onPress={onDonePress}
+                                  mode="contained"
+                                >
+                                  Finish Creating Table
+                                </Button>
+                              )}
+                            </View>
                             <View style={styles.emptySpace} />
                         </>
                     }

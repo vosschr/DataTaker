@@ -161,9 +161,8 @@ export default function Index() {
                 </Button>
                 {/* TABLES */}
                 {tables.map((table, index) => (
-                    <View style={styles.table}>
+                    <View style={styles.table} key={index}>
                         <Table
-                            key={index}
                             tableName={table}
                             onAction={handlePickerAction}
                         />
