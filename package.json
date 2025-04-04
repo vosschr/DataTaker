@@ -68,5 +68,11 @@
     ],
     "moduleResolution": "node16"
   },
-  "expo.doctor.reactNativeDirectoryCheck.listUnknownPackages": "false"
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "listUnknownPackages": false
+      }
+    }
+  }
 }
