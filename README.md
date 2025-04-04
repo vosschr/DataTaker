@@ -2,15 +2,35 @@
 
 This is our app for the Fortgeschrittenen Praktikum.
 
+DataTaker is designed to simplify for taking data and the creation of (currently flat) databases.
+
 ## Collaborators
 
+- Christian Voß
 - Parviz Moskalenko
 - Nguyen Ngoc Le Luong
-- Christian Voß
 
-# Developer Guide
+## Features
 
-## Setting Up the Development Environment
+- Easily create flat databases
+- Input data of currently up to five data types:
+- Text
+- Numbers
+- Booleans
+- Pictures (by taking pictures or selecting from files)
+- Enums (fully definable in-app)
+- Save tables and continue taking data at any time
+- Preview tables with image links
+- Share .csv-files
+- Compress .csv-files and images into .zip-files and share them
+- Intuitive user interface
+- Dark mode
+- apk download for android
+- iOS compatibility
+
+## Developer Guide
+
+### Setting Up the Development Environment
 
 0. **Install Node.js**
    - Download and install Node.js from [nodejs.org](https://nodejs.org).
@@ -42,7 +62,7 @@ This is our app for the Fortgeschrittenen Praktikum.
 3b. **Expo Go App (Optional)**
    - Install the Expo Go app on your physical phone from the [Google Play Store](https://play.google.com/store) or [Apple App Store](https://www.apple.com/app-store/).
 
-## Running the Project
+### Running the Project
 
 1. **Start the Expo Development Server**
    Open a terminal (e.g., in VS Code) and run:
@@ -57,7 +77,7 @@ This is our app for the Fortgeschrittenen Praktikum.
    - **Using Virtual Device:**
      - Press `a` in the terminal to connect to an Android virtual phone.
 
-## Debugging
+### Debugging
 
 - **Open Developer Menu**
   - **On Physical Device:** Shake the phone while running the app in Expo Go.
