@@ -34,9 +34,9 @@ export default function DataInput() {
 
             // Create a new array of parameters from the columns
             const newParameters: Param[] = columns
-                .filter((col) => col.name !== "id")        // skip the "id" column
-                .filter((col) => col.name !== "date")      // skip the "date" column
-                .filter((col) => col.name !== "latitude")  // skip gps tag
+                .filter((col) => col.name !== "id") // skip the "id" column
+                .filter((col) => col.name !== "date") // skip the "date" column
+                .filter((col) => col.name !== "latitude") // skip gps tag
                 .filter((col) => col.name !== "longitude") // skip gps tag
                 .map((col) => ({
                     name: col.name,
@@ -56,7 +56,7 @@ export default function DataInput() {
                 tableName
             );
         }
-    };
+    }
 
     useEffect(() => {
         loadDataInputFields();
@@ -64,33 +64,35 @@ export default function DataInput() {
     // the empty dependency list makes it only start once
 
     /** Updates the value for a parameter with name paramName to newValue.
-     * 
+     *
      * @param paramName string - name of the parameter
      * @param newValue string - new value
      */
     function onDataInputUpdate(paramName: string, newValue: string) {
-        setParameters(prevValues =>
-            prevValues.map(param =>
-                param.name === paramName
-                    ? { ...param, value: newValue }
-                    : param
+        setParameters((prevValues) =>
+            prevValues.map((param) =>
+                param.name === paramName ? { ...param, value: newValue } : param
             )
         );
     }
 
     async function includesGeoTag(): Promise<boolean> {
-        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName as string);
+        const tableSettings: TableSettings = await DataBase.getTableSettings(
+            tableName as string
+        );
         return tableSettings.geoTag;
     }
 
     // Modified to ignore BOOLEAN parameters when checking for missing values
     function hasMissingParams(): boolean {
-        return parameters.some(param => param.type !== "BOOLEAN" && !param.value.trim());
+        return parameters.some(
+            (param) => param.type !== "BOOLEAN" && !param.value.trim()
+        );
     }
 
     function hasAnyParams(): boolean {
         // Prüfe, ob mindestens ein value da ist
-        return parameters.some(param => param.value.trim());
+        return parameters.some((param) => param.value.trim());
     }
 
     async function onNextButton() {
@@ -104,28 +106,34 @@ export default function DataInput() {
         }
 
         // check if permissions are granted
-        if (await includesGeoTag() && !await requestLocationPermission()) {
-            Alert.alert("Permission denied", "Location permission is required to add data.");
+        if ((await includesGeoTag()) && !(await requestLocationPermission())) {
+            Alert.alert(
+                "Permission denied",
+                "Location permission is required to add data."
+            );
             setIsSaving(false);
             return;
         }
 
         try {
             // Build an object { name: val1, age: val2, ... } for addRow
-            const record = parameters.reduce<Record<string, string>>((obj, param) => {
-                // For BOOLEAN fields, if the value is empty, save "false"
-                if (param.type === "BOOLEAN" && !param.value.trim()) {
-                    obj[param.name] = "false";
-                } else {
-                    obj[param.name] = param.value;
-                }
-                return obj;
-            }, {});
+            const record = parameters.reduce<Record<string, string>>(
+                (obj, param) => {
+                    // For BOOLEAN fields, if the value is empty, save "false"
+                    if (param.type === "BOOLEAN" && !param.value.trim()) {
+                        obj[param.name] = "false";
+                    } else {
+                        obj[param.name] = param.value;
+                    }
+                    return obj;
+                },
+                {}
+            );
 
             await DataBase.addRow(tableName as string, record);
 
             // empty the fields
-            setParameters(parameters.map(param => ({ ...param, value: "" })));
+            setParameters(parameters.map((param) => ({ ...param, value: "" })));
         } catch (error) {
             console.error("Error while trying to add to DB:", error);
             Alert.alert("Error", "Error occured while saving");
@@ -146,11 +154,22 @@ export default function DataInput() {
     }
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: theme.colors.background },
+            ]}
+        >
             <View style={styles.headerContainer}>
                 {/* TABLE NAME */}
                 <Icon source="table" size={20} color={theme.colors.onSurface} />
-                <Text variant="headlineMedium" style={[styles.headerText, { color: theme.colors.onSurface }]}>
+                <Text
+                    variant="headlineMedium"
+                    style={[
+                        styles.headerText,
+                        { color: theme.colors.onSurface },
+                    ]}
+                >
                     {tableName}
                 </Text>
             </View>
@@ -163,7 +182,9 @@ export default function DataInput() {
                             paramName={param.name}
                             paramType={param.type}
                             value={param.value}
-                            onValueChange={(newValue) => onDataInputUpdate(param.name, newValue)}
+                            onValueChange={(newValue) =>
+                                onDataInputUpdate(param.name, newValue)
+                            }
                         />
                     </View>
                 ))}
@@ -217,16 +238,16 @@ const styles = StyleSheet.create({
         fontSize: 20,
     },
     headerText: {
-        maxWidth: '80%',
+        maxWidth: "80%",
         fontSize: 19,
-        fontWeight: 'bold',
+        fontWeight: "bold",
         marginLeft: 5,
     },
     headerContainer: {
         flexDirection: "row",
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
+        width: "100%",
+        alignItems: "center",
+        justifyContent: "center",
         marginBottom: 0,
     },
 });

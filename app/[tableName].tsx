@@ -1,147 +1,199 @@
 import { useEffect, useState } from "react";
-import { View, StyleSheet, Modal, TouchableOpacity, Image as RNImage, ScrollView } from "react-native";
-import { ActivityIndicator, DataTable, Text, Button, useTheme } from "react-native-paper";
+import {
+    View,
+    StyleSheet,
+    Modal,
+    TouchableOpacity,
+    Image as RNImage,
+    ScrollView,
+} from "react-native";
+import {
+    ActivityIndicator,
+    DataTable,
+    Text,
+    Button,
+    useTheme,
+} from "react-native-paper";
 import { useLocalSearchParams } from "expo-router";
 import { DataBase } from "@/services/database";
 
 export default function TableDataScreen() {
-  const { tableName } = useLocalSearchParams();
-  const [tableData, setTableData] = useState<any[]>([]);
-  const [columns, setColumns] = useState<string[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const theme = useTheme();
+    const { tableName } = useLocalSearchParams();
+    const [tableData, setTableData] = useState<any[]>([]);
+    const [columns, setColumns] = useState<string[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const theme = useTheme();
 
-  // Helper-Funktion: Gibt nur den Dateinamen zurück
-  const extractFileName = (path: string): string => {
-    return path.substring(path.lastIndexOf("/") + 1);
-  };
-
-  // Helper-Funktion: Prüft, ob ein Pfad auf ein Bild verweist
-  const isImagePath = (path: string): boolean => {
-    return /\.(jpg|jpeg|png|gif)$/i.test(path);
-  };
-
-  useEffect(() => {
-    const loadData = async () => {
-      try {
-        if (typeof tableName === "string") {
-          const data = await DataBase.queryAll(tableName);
-          setTableData(data);
-          if (data.length > 0) {
-            setColumns(Object.keys(data[0]));
-          }
-        }
-      } catch (error) {
-        console.error("Error loading table data:", error);
-      } finally {
-        setLoading(false);
-      }
+    // Helper-Funktion: Gibt nur den Dateinamen zurück
+    const extractFileName = (path: string): string => {
+        return path.substring(path.lastIndexOf("/") + 1);
     };
 
-    loadData();
-  }, [tableName]);
+    // Helper-Funktion: Prüft, ob ein Pfad auf ein Bild verweist
+    const isImagePath = (path: string): boolean => {
+        return /\.(jpg|jpeg|png|gif)$/i.test(path);
+    };
 
-  if (typeof tableName !== "string") {
-    return <Text>Invalid table name</Text>;
-  }
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                if (typeof tableName === "string") {
+                    const data = await DataBase.queryAll(tableName);
+                    setTableData(data);
+                    if (data.length > 0) {
+                        setColumns(Object.keys(data[0]));
+                    }
+                }
+            } catch (error) {
+                console.error("Error loading table data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
 
-  return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <Text variant="headlineMedium" style={[styles.title, { color: theme.colors.onSurface }]}>
-        {tableName}
-      </Text>
+        loadData();
+    }, [tableName]);
 
-      {loading ? (
-        <ActivityIndicator size="large" />
-      ) : (
-        <ScrollView style={{ flex: 1 }}>
-          <DataTable>
-            <DataTable.Header>
-              {columns.map((column) => (
-                <DataTable.Title key={column}>{column}</DataTable.Title>
-              ))}
-            </DataTable.Header>
+    if (typeof tableName !== "string") {
+        return <Text>Invalid table name</Text>;
+    }
 
-            {tableData.map((row, index) => (
-              <DataTable.Row key={index}>
-                {columns.map((column) => {
-                  const cellValue = String(row[column]);
-                  let displayValue = cellValue;
-                  if (isImagePath(cellValue)) {
-                    displayValue = extractFileName(cellValue);
-                  }
-                  return (
-                    <DataTable.Cell key={`${index}-${column}`}>
-                      {isImagePath(cellValue) ? (
-                        <TouchableOpacity onPress={() => setSelectedImage(cellValue)}>
-                          <Text style={styles.imageText}>{displayValue}</Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <Text>{displayValue}</Text>
-                      )}
-                    </DataTable.Cell>
-                  );
-                })}
-              </DataTable.Row>
-            ))}
+    return (
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: theme.colors.background },
+            ]}
+        >
+            <Text
+                variant="headlineMedium"
+                style={[styles.title, { color: theme.colors.onSurface }]}
+            >
+                {tableName}
+            </Text>
 
-            {tableData.length === 0 && (
-              <DataTable.Row>
-                <DataTable.Cell>No data found</DataTable.Cell>
-              </DataTable.Row>
+            {loading ? (
+                <ActivityIndicator size="large" />
+            ) : (
+                <ScrollView style={{ flex: 1 }}>
+                    <DataTable>
+                        <DataTable.Header>
+                            {columns.map((column) => (
+                                <DataTable.Title key={column}>
+                                    {column}
+                                </DataTable.Title>
+                            ))}
+                        </DataTable.Header>
+
+                        {tableData.map((row, index) => (
+                            <DataTable.Row key={index}>
+                                {columns.map((column) => {
+                                    const cellValue = String(row[column]);
+                                    let displayValue = cellValue;
+                                    if (isImagePath(cellValue)) {
+                                        displayValue =
+                                            extractFileName(cellValue);
+                                    }
+                                    return (
+                                        <DataTable.Cell
+                                            key={`${index}-${column}`}
+                                        >
+                                            {isImagePath(cellValue) ? (
+                                                <TouchableOpacity
+                                                    onPress={() =>
+                                                        setSelectedImage(
+                                                            cellValue
+                                                        )
+                                                    }
+                                                >
+                                                    <Text
+                                                        style={styles.imageText}
+                                                    >
+                                                        {displayValue}
+                                                    </Text>
+                                                </TouchableOpacity>
+                                            ) : (
+                                                <Text>{displayValue}</Text>
+                                            )}
+                                        </DataTable.Cell>
+                                    );
+                                })}
+                            </DataTable.Row>
+                        ))}
+
+                        {tableData.length === 0 && (
+                            <DataTable.Row>
+                                <DataTable.Cell>No data found</DataTable.Cell>
+                            </DataTable.Row>
+                        )}
+                    </DataTable>
+                </ScrollView>
             )}
-          </DataTable>
-        </ScrollView>
-      )}
 
-      <Modal visible={!!selectedImage} transparent={true} animationType="fade">
-        <View style={styles.modalBackground}>
-          <View style={[styles.modalContainer, { backgroundColor: theme.colors.surface }]}>
-            {selectedImage && (
-              <RNImage source={{ uri: selectedImage }} style={styles.fullImage} resizeMode="contain" />
-            )}
-            <Button mode="contained" onPress={() => setSelectedImage(null)}>
-              Schließen
-            </Button>
-          </View>
+            <Modal
+                visible={!!selectedImage}
+                transparent={true}
+                animationType="fade"
+            >
+                <View style={styles.modalBackground}>
+                    <View
+                        style={[
+                            styles.modalContainer,
+                            { backgroundColor: theme.colors.surface },
+                        ]}
+                    >
+                        {selectedImage && (
+                            <RNImage
+                                source={{ uri: selectedImage }}
+                                style={styles.fullImage}
+                                resizeMode="contain"
+                            />
+                        )}
+                        <Button
+                            mode="contained"
+                            onPress={() => setSelectedImage(null)}
+                        >
+                            Schließen
+                        </Button>
+                    </View>
+                </View>
+            </Modal>
         </View>
-      </Modal>
-    </View>
-  );
+    );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 16,
-  },
-  title: {
-    marginBottom: 20,
-    textAlign: "center",
-  },
-  imageText: {
-    color: "blue",
-    textDecorationLine: "underline",
-  },
-  modalBackground: {
-    flex: 1,
-    backgroundColor: "rgba(0,0,0,0.8)",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContainer: {
-    width: "90%",
-    height: "80%",
-    backgroundColor: "white",
-    padding: 10,
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  fullImage: {
-    width: "100%",
-    height: "80%",
-    marginBottom: 10,
-  },
+    container: {
+        flex: 1,
+        padding: 16,
+    },
+    title: {
+        marginBottom: 20,
+        textAlign: "center",
+    },
+    imageText: {
+        color: "blue",
+        textDecorationLine: "underline",
+    },
+    modalBackground: {
+        flex: 1,
+        backgroundColor: "rgba(0,0,0,0.8)",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    modalContainer: {
+        width: "90%",
+        height: "80%",
+        backgroundColor: "white",
+        padding: 10,
+        borderRadius: 10,
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    fullImage: {
+        width: "100%",
+        height: "80%",
+        marginBottom: 10,
+    },
 });

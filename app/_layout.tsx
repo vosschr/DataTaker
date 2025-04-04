@@ -53,15 +53,24 @@ function ThemeConsumerComponent({ router }: { router: any }) {
                 />
                 <Stack.Screen
                     name="varChooser"
-                    options={{ title: "Create Table", headerTitleAlign: "center" }}
+                    options={{
+                        title: "Create Table",
+                        headerTitleAlign: "center",
+                    }}
                 />
                 <Stack.Screen
                     name="dataInput"
-                    options={{ title: "Enter Data", headerTitleAlign: "center" }}
+                    options={{
+                        title: "Enter Data",
+                        headerTitleAlign: "center",
+                    }}
                 />
                 <Stack.Screen
                     name="+not-found"
-                    options={{ title: "Oops! Not Found", headerTitleAlign: "center" }}
+                    options={{
+                        title: "Oops! Not Found",
+                        headerTitleAlign: "center",
+                    }}
                 />
                 <Stack.Screen
                     name="settings"

@@ -6,7 +6,6 @@ import * as FileSystem from "expo-file-system";
 
 import { getCurrentLocation } from "./geotag";
 
-
 export type TableInfo = {
     cid: number;
     name: string;
@@ -17,10 +16,10 @@ export type TableInfo = {
 };
 
 export type TableSettings = {
-    auto_ids: boolean,
-    date: boolean,
-    geoTag: boolean,
-}
+    auto_ids: boolean;
+    date: boolean;
+    geoTag: boolean;
+};
 
 export const TABLE_DIR = `${FileSystem.documentDirectory}DataTaker/tables/`;
 export const DATA_DIR = `${FileSystem.documentDirectory}DataTaker/data/`;
@@ -37,7 +36,11 @@ export const DataBase = {
             email: 'TEXT UNIQUE NOT NULL'
         };
      */
-    initializeDatabase: async (tableName: string, tableSchema: object, tableSettings: TableSettings) => {
+    initializeDatabase: async (
+        tableName: string,
+        tableSchema: object,
+        tableSettings: TableSettings
+    ) => {
         console.log("DEBUG: initializing Database.");
         console.log("DEBUG: talbeName: ", tableName);
 
@@ -49,8 +52,8 @@ export const DataBase = {
         // add an auto-incrementing ID column to the table schema
         if (tableSettings.auto_ids) {
             tableSchema = {
-                id: 'INTEGER PRIMARY KEY AUTOINCREMENT',
-                ...tableSchema // Spread the rest of the schema
+                id: "INTEGER PRIMARY KEY AUTOINCREMENT",
+                ...tableSchema, // Spread the rest of the schema
             };
             console.log("DEBUG: tableSchema: ", tableSchema);
         }
@@ -58,8 +61,8 @@ export const DataBase = {
         // add date to table schema
         if (tableSettings.date) {
             tableSchema = {
-                date: 'TEXT',
-                ...tableSchema // Spread the rest of the schema
+                date: "TEXT",
+                ...tableSchema, // Spread the rest of the schema
             };
             console.log("DEBUG: tableSchema: ", tableSchema);
         }
@@ -67,9 +70,9 @@ export const DataBase = {
         // add geo tag to table schema
         if (tableSettings.geoTag) {
             tableSchema = {
-                latitude: 'REAL',
-                longitude: 'REAL',
-                ...tableSchema // Spread the rest of the schema
+                latitude: "REAL",
+                longitude: "REAL",
+                ...tableSchema, // Spread the rest of the schema
             };
             console.log("DEBUG: tableSchema: ", tableSchema);
         }
@@ -93,14 +96,15 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         await db.closeAsync();
     },
 
-    
     /** Reading data from table tableName.
      *
      * @param tableName - string name of the table (that is also by default the database name)
      * @returns - Promise<object[]> table
      */
     queryAll: async (tableName: string): Promise<object[]> => {
-        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName);
+        const tableSettings: TableSettings = await DataBase.getTableSettings(
+            tableName
+        );
         console.log("DEBUG: tableSettings: ", tableSettings);
 
         console.log("DEBUG: querying ", tableName);
@@ -116,7 +120,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
                 `SELECT name FROM sqlite_master WHERE type='table' AND name=?;`,
                 [tableName]
             );
-            
+
             if (!tableExists) {
                 throw new Error(`Table ${tableName} does not exist`);
             }
@@ -143,8 +147,7 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
             let message;
             if (error instanceof Error) {
                 message = error.message;
-            }
-	        else {
+            } else {
                 message = String(error);
             }
             throw new Error(`Failed to query table ${tableName}: ${message}`);
@@ -158,13 +161,13 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
 
         // Function to check if a value is an image path (hacky)
         const isImagePath = (value: any): boolean => {
-        return typeof value === 'string' && value.startsWith('file://');
+            return typeof value === "string" && value.startsWith("file://");
         };
 
         // Extract all image paths from the table data
         const imagePaths: string[] = tableData
-            .flatMap(row => Object.values(row)) // Flatten all values into a single array
-            .filter(value => isImagePath(value)); // Filter for values that are image paths
+            .flatMap((row) => Object.values(row)) // Flatten all values into a single array
+            .filter((value) => isImagePath(value)); // Filter for values that are image paths
 
         console.log("DEBUG: imagePaths: ", imagePaths);
         return imagePaths;
@@ -181,7 +184,9 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         };
      */
     addRow: async (tableName: string, record: object) => {
-        const tableSettings: TableSettings = await DataBase.getTableSettings(tableName);
+        const tableSettings: TableSettings = await DataBase.getTableSettings(
+            tableName
+        );
         console.log("DEBUG: addRow: tableSettings: ", tableSettings);
 
         console.log("DEBUG: adding to ", tableName);
@@ -196,25 +201,28 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
             const currentDate = new Date().toISOString(); // ISO format date
             record = {
                 ...record,
-                date: currentDate
-            }
+                date: currentDate,
+            };
         }
         console.log("DEBUG: not adding date to record");
 
         // Get the current location
         if (tableSettings.geoTag) {
             console.log("DEBUG: adding geotag to record");
-            const geotag: { latitude: number, longitude: number } | null = await getCurrentLocation();
+            const geotag: { latitude: number; longitude: number } | null =
+                await getCurrentLocation();
             record = {
                 ...record,
                 longitude: geotag?.latitude,
-                latitude: geotag?.longitude
-            }
+                latitude: geotag?.longitude,
+            };
         }
         console.log("DEBUG: not adding geotag to record");
 
         // convert object to strings used for query
-        const columns = Object.keys(record).map(key => `'${key}'`).join(", ");
+        const columns = Object.keys(record)
+            .map((key) => `'${key}'`)
+            .join(", ");
         console.log("DEBUG: columns: ", columns);
         const values = Object.values(record);
         console.log("DEBUG: values: ", values);
@@ -321,9 +329,11 @@ CREATE TABLE IF NOT EXISTS [${tableName}] (${columns});
         console.log("DEBUG: DBcols: ", DBcols);
 
         return {
-            auto_ids: DBcols.some(col => col.name === "id"),
-            date: DBcols.some(col => col.name === "date"),
-            geoTag: DBcols.some(col => col.name === "latitude") && DBcols.some(col => col.name === "longitude"),
+            auto_ids: DBcols.some((col) => col.name === "id"),
+            date: DBcols.some((col) => col.name === "date"),
+            geoTag:
+                DBcols.some((col) => col.name === "latitude") &&
+                DBcols.some((col) => col.name === "longitude"),
         };
-    }
+    },
 };

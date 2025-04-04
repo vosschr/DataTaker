@@ -282,26 +282,26 @@ export default function VarChooser() {
                             )}
                             {/* DONE BUTTON */}
                             <View>
-                              {isDoneButtonDisabled && (
-                                <Button
-                                  style={styles.button}
-                                  labelStyle={styles.buttonLabel}
-                                  onPress={() => {}}
-                                  mode="contained"
-                                >
-                                  Table was already created
-                                </Button>
-                              )}
-                              {!isDoneButtonDisabled && (
-                                <Button
-                                  style={styles.button}
-                                  labelStyle={styles.buttonLabel}
-                                  onPress={onDonePress}
-                                  mode="contained"
-                                >
-                                  Finish Creating Table
-                                </Button>
-                              )}
+                                {isDoneButtonDisabled && (
+                                    <Button
+                                        style={styles.button}
+                                        labelStyle={styles.buttonLabel}
+                                        onPress={() => {}}
+                                        mode="contained"
+                                    >
+                                        Table was already created
+                                    </Button>
+                                )}
+                                {!isDoneButtonDisabled && (
+                                    <Button
+                                        style={styles.button}
+                                        labelStyle={styles.buttonLabel}
+                                        onPress={onDonePress}
+                                        mode="contained"
+                                    >
+                                        Finish Creating Table
+                                    </Button>
+                                )}
                             </View>
                             <View style={styles.emptySpace} />
                         </>

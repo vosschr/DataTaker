@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
-import { Text, View, ScrollView, StyleSheet, Alert } from "react-native";
+import { View, ScrollView, StyleSheet, Alert } from "react-native";
 import { useRouter, useFocusEffect } from "expo-router";
 import * as FileSystem from "expo-file-system";
-import Table from "@/components/Table"
+import Table from "@/components/Table";
 
 import { Button, useTheme } from "react-native-paper";
 
@@ -104,7 +104,9 @@ export default function Index() {
         switch (action) {
             case "take data":
                 console.log("DEBUG: " + action + " on " + tableName + ".");
-                router.push(`/dataInput?tableName=${encodeURIComponent(tableName)}`); // navigate to data input page
+                router.push(
+                    `/dataInput?tableName=${encodeURIComponent(tableName)}`
+                ); // navigate to data input page
                 break;
             case "delete":
                 Alert.alert(
@@ -112,25 +114,27 @@ export default function Index() {
                     `Do you really want to delete "${tableName}" ?`,
                     [
                         { text: "Cancel", style: "cancel" },
-                        { 
-                            text: "Delete", 
+                        {
+                            text: "Delete",
                             style: "destructive",
                             onPress: async () => {
                                 console.log("DEBUG: delete " + tableName + ".");
                                 setTables([]);
                                 await DataBase.deleteDatabase(tableName);
                                 fetchTables();
-                            }
-                        }
+                            },
+                        },
                     ],
                     { cancelable: true }
                 );
                 break;
             case "export":
-                console.log("DEBUG: pressed \"Export .scv\"");
+                console.log('DEBUG: pressed "Export .scv"');
                 try {
                     console.log("DEBUG: exporting " + tableName + ".");
-                    const tableObject: object[] = await DataBase.queryAll(tableName); // Wait for the Promise to resolve
+                    const tableObject: object[] = await DataBase.queryAll(
+                        tableName
+                    ); // Wait for the Promise to resolve
                     const filePath = await FileManager.outputCSV(tableObject); // Wait for CSV to be written
                     console.log(`CSV file exported at: ${filePath}`);
                 } catch (error) {
@@ -138,13 +142,22 @@ export default function Index() {
                 }
                 break;
             case "exportZip":
-                console.log("DEBUG: pressed \"Export .zip\"");
+                console.log('DEBUG: pressed "Export .zip"');
                 try {
-                    console.log("DEBUG: zipping images and exporting " + tableName + ".");
-                    const tableObject: object[] = await DataBase.queryAll(tableName); // Wait for the Promise to resolve
-                    const imagePaths: string[] = await DataBase.getImagePaths(tableName);
+                    console.log(
+                        "DEBUG: zipping images and exporting " + tableName + "."
+                    );
+                    const tableObject: object[] = await DataBase.queryAll(
+                        tableName
+                    ); // Wait for the Promise to resolve
+                    const imagePaths: string[] = await DataBase.getImagePaths(
+                        tableName
+                    );
                     console.log("DEBUG: imagePaths arrived in index.tsx");
-                    await FileManager.shareFolderWithCSVAndImages(tableObject, imagePaths); // Wait for ZIP to be written
+                    await FileManager.shareFolderWithCSVAndImages(
+                        tableObject,
+                        imagePaths
+                    ); // Wait for ZIP to be written
                 } catch (error) {
                     console.error(`Error exporting table ${tableName}:`, error);
                 }
@@ -153,10 +166,20 @@ export default function Index() {
     }
 
     return (
-        <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+        <View
+            style={[
+                styles.container,
+                { backgroundColor: theme.colors.background },
+            ]}
+        >
             <ScrollView style={styles.scrollView}>
                 {/* Plus Button to start new Table setup (link to varChooser) */}
-                <Button icon="plus" onPress={onPlusPress} mode="contained" style={styles.newTableButton} >
+                <Button
+                    icon="plus"
+                    onPress={onPlusPress}
+                    mode="contained"
+                    style={styles.newTableButton}
+                >
                     New table
                 </Button>
                 {/* TABLES */}
@@ -181,9 +204,9 @@ const styles = StyleSheet.create({
         marginTop: 0,
     },
     newTableButton: {
-        width: "80%",       // 80% Breite
+        width: "80%", // 80% Breite
         alignSelf: "center",
-        marginTop: 14,      // etwas Abstand nach oben
+        marginTop: 14, // etwas Abstand nach oben
         marginBottom: 14,
     },
     scrollView: {
@@ -191,6 +214,6 @@ const styles = StyleSheet.create({
     },
     table: {
         alignSelf: "center",
-        width: "80%"
-    }
+        width: "80%",
+    },
 });
