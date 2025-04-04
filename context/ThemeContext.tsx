@@ -16,7 +16,7 @@ const customDarkTheme = {
   ...MD3DarkTheme,
   colors: {
     ...MD3DarkTheme.colors,
-    primary: "#FF7F00", // Orange
+    primary: "#b88f16", // Orange
     background: "#000000",
     text: "#ffffff",
   },

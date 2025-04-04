@@ -161,7 +161,7 @@ export default function VarChooser() {
                                         styles.setting,
                                         {
                                             backgroundColor: theme.dark
-                                                ? "#FF7F00"
+                                                ? "#4d3248"
                                                 : "#d4cce6",
                                         },
                                     ]}
@@ -192,7 +192,7 @@ export default function VarChooser() {
                                         styles.setting,
                                         {
                                             backgroundColor: theme.dark
-                                                ? "#FF7F00"
+                                                ? "#4d3248"
                                                 : "#d4cce6",
                                         },
                                     ]}
@@ -223,7 +223,7 @@ export default function VarChooser() {
                                         styles.setting,
                                         {
                                             backgroundColor: theme.dark
-                                                ? "#FF7F00"
+                                                ? "#4d3248"
                                                 : "#d4cce6",
                                         },
                                     ]}
