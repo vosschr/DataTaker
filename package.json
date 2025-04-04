@@ -47,8 +47,7 @@
     "react-native-screens": "~4.4.0",
     "react-native-web": "~0.19.13",
     "react-native-webview": "13.12.5",
-    "react-native-zip-archive": "^7.0.1",
-    "react-native-zip-stream": "^1.0.7"
+    "expo-dev-client": "~5.0.19"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
@@ -68,5 +67,6 @@
       "./@types"
     ],
     "moduleResolution": "node16"
-  }
+  },
+  "expo.doctor.reactNativeDirectoryCheck.listUnknownPackages": "false"
 }
