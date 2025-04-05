@@ -195,12 +195,16 @@ const styles = StyleSheet.create({
         marginTop: 0,
     },
     newTableButton: {
-        width: "100%",       // 80% Breite
+        width: "80%",       // 80% Breite
         alignSelf: "center",
-        marginTop: 5,      // etwas Abstand nach oben
-        marginBottom: 5,
+        marginTop: 14,      // etwas Abstand nach oben
+        marginBottom: 14,
     },
     scrollView: {
+        width: "80%",
+    },
+    table: {
+        alignSelf: "center",
         width: "80%",
     },
     loadingOverlay: {
