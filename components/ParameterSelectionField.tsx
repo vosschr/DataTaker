@@ -26,7 +26,7 @@ export default function ParameterSelectionField({
 
     // Called whenever the value in an Enum TextInput changes
     function updateEnumList(element: string, index: number) {
-        const temp = [...enumList];
+        const temp: string[] = [...enumList];
         temp[index] = element;
         setEnumList(temp);
         onNameChange(updateEnumParamName(paramName));
@@ -149,7 +149,7 @@ export default function ParameterSelectionField({
                                 placeholder="Type something"
                                 value={element}
                                 onChangeText={(text) =>
-                                    updateEnumList(text, index)
+                                    updateEnumList(text.replace(/[(),]/g, ''), index)
                                 }
                                 style={styles.enumTextInput}
                             />

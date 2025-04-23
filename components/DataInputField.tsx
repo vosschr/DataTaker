@@ -234,9 +234,9 @@ export default function DataInputField({
                                             .slice(firstCommaIndex + 1)
                                             .replace(/,/g, "");
                                 }
-                                onValueChange(numericText);
+                                onValueChange(numericText.replace(/[\[\](){},]/g, ''));
                             } else {
-                                onValueChange(text);
+                                onValueChange(text.replace(/[(),]/g, ''));
                             }
                         }}
                     />
