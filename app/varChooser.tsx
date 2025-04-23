@@ -128,7 +128,7 @@ export default function VarChooser() {
                             paramName={item.name}
                             paramType={item.type}
                             onNameChange={(value) =>
-                                updateParameter(index, "name", value)
+                                updateParameter(index, "name", value.replace(/[(),]/g, ""))
                             }
                             onTypeChange={(value) =>
                                 updateParameter(index, "type", value)
